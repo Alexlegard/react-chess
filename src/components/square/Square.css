@@ -1,0 +1,8 @@
+.light-square.piece:hover,
+.dark-square.piece:hover {
+    cursor:grab;
+}
+
+.selected-square {
+    background-color: yellow;
+}
