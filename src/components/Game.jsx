@@ -6,6 +6,7 @@ import { movePawn } from './pieceLogic/pawnLogic.ts';
 import { moveBishop } from './pieceLogic/bishopLogic.ts';
 import { moveRook } from './pieceLogic/rookLogic.ts';
 import { moveQueen } from './pieceLogic/queenLogic.ts';
+import { moveKing } from './pieceLogic/kingLogic.ts';
 
 const Game = () => {
 
@@ -79,7 +80,7 @@ const Game = () => {
                 moveQueen(selectedPiece, destinationSquare, chessboard);
                 break;
             case "k":
-                alert("Run king function.");
+                moveKing(selectedPiece, destinationSquare, chessboard);
                 break;
             default:
                 alert("Unknown piece type.");
