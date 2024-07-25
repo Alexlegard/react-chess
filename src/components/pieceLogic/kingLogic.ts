@@ -21,10 +21,15 @@ export const moveKing = (originalSquare: any[], destinationSquare: any[], board:
     const canMoveHorizontally = (rankDiff + fileDiff === 1);
     const canMoveDiagonally = (rankDiff === 1 && fileDiff === 1);
 
+    // The king may move horizontally or diagonally, one square.
     if( canMoveHorizontally || canMoveDiagonally ) {
         // Check if the destination square is empty
         if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
             board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+        }
+        // Check if the destination square is occupied by an enemy piece.
+        if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+            board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
         }
     }
 }

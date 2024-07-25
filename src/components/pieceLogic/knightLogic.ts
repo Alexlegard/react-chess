@@ -10,6 +10,7 @@ import ChessboardClass from "../../ChessboardClass";
  */
 export const moveKnight = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
+    debugger;
     // Calculate the rank and file difference, which we need to calculate valid knight moves
     const rankDiff = Math.abs(originalSquare[0] - destinationSquare[0]);
     const asciiOfOriginalFile = originalSquare[1].charCodeAt(0);
@@ -21,11 +22,13 @@ export const moveKnight = (originalSquare: any[], destinationSquare: any[], boar
 
         //Check if the destination square is empty, occupied by a friendly piece, or an enemy piece
         if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+            debugger;
             board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
         }
-        
         // If the destination square contains an enemy piece, we need to do a capture.
-    } else {
-        return;
+        if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+            debugger;
+            board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+        }  
     }
 }

@@ -19,11 +19,19 @@ export const moveBishop = (originalSquare: any[], destinationSquare: any[], boar
     const fileDiff = Math.abs(asciiOfOriginalFile - asciiOfDestinationFile);
 
     if(rankDiff === fileDiff && rankDiff > 0) {
-        // Check if the destination square is empty, and the path to that square is empty.
-        if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0]) && board.isPathEmpty(originalSquare, destinationSquare)) {
-            board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+        // Check if the path to that square is empty
+        if(board.isPathEmpty(originalSquare, destinationSquare)) {
+
+            // If the destination square is empty, move to that square
+            if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+                board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+            }
+
+            // If it's occupied by an enemy piece, we need to do a capture
+            if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+                debugger;
+                board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+            }
         }
     }
-
-
 }

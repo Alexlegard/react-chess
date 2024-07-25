@@ -129,6 +129,41 @@ class ChessboardClass {
         return true;
     }
 
+    /*
+    * @param originalFile - Letter representing the original square's file.
+    * @param originalRank - Number representing the original square's rank (starting from 1)
+    * @param destinationFile - Letter representing the destination square's file
+    * @param destinationRank - Number representing the destination square's rank (starting from 1)
+    * @param piece - Letter representing the piece. A capital letter is a white piece while a
+    *   lowercase letter is a black piece.
+    */
+    isSquareOccupiedByEnemyPiece(originalFile, originalRank, destinationFile, destinationRank, piece) {
+
+        debugger;
+        // Convert files (letters) into numeric values which are the correct index
+        const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
+        const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
+
+        // Correctly calculate the index for the ranks as well
+        const originalRankIndex = 8 - originalRank;
+        const destinationRankIndex = 8 - destinationRank;
+
+        const destinationSqPiece = this.board[destinationRankIndex][destinationFileIndex];
+
+        // Calculate if both letters are different capitalization.
+        // Check if the destination square is empty as well.
+        const isOriginalSqPieceUpperCase = piece === piece.toUpperCase();
+        const isDestinationSqPieceUpperCase = destinationSqPiece === destinationSqPiece.toUpperCase();
+        const differentColor = isOriginalSqPieceUpperCase !== isDestinationSqPieceUpperCase;
+        const isSquareEmpty = destinationSqPiece === "";
+
+        // If the piece is empty string (empty square) or same capitalization (friendly piece), return false
+        if(!isSquareEmpty && differentColor) {
+            return true;
+        }
+        return false;      
+    }
+
     
     /* 
      * When moving any kind of longrange piece, we usually have to check if all the squares
@@ -299,8 +334,6 @@ class ChessboardClass {
 
             let square = this.board[rank][file];
 
-            //alert(`Rank index: ${rank}, File index: ${file}. Currently checking square: ${square}`);
-
             // Check if the square is empty
             if (square !== "") {
                 return false;
@@ -329,8 +362,6 @@ class ChessboardClass {
         for(let rank = highRankIndex + 1, file = highFileIndex - 1; rank < lowRankIndex; rank++, file--) {
 
             let square = this.board[rank][file];
-
-            alert(`Rank index: ${rank}. File index: ${file}. Currently checking square: ${this.board[rank][file]}`);
 
             if(square !== "") {
                 return false;
@@ -466,7 +497,7 @@ class ChessboardClass {
         const originalRankIndex = 8 - originalRank;
         const destinationRankIndex = 8 - destinationRank;
 
-        // To move the knight, first we must change the knight's original square into an empty square.
+        // Whenever we move a piece, we turn the square it occupied into an empty square.
         this.board[originalRankIndex][originalFileIndex] = "";
 
         // Then we have to change the destination square to "piece"
@@ -477,6 +508,20 @@ class ChessboardClass {
 
         this.constructFenString();
         return;
+    }
+
+    /*
+    * @param originalFile - Letter representing the original square's file.
+    * @param originalRank - Number representing the original square's rank (starting from 1)
+    * @param destinationFile - Letter representing the destination square's file
+    * @param destinationRank - Number representing the destination square's rank (starting from 1)
+    * @param piece - Letter representing the piece. A capital letter is a white piece while a
+    *   lowercase letter is a black piece.
+    * 
+    * The logic for capturing an enemy piece, in theory should be the same as moving to an empty square.
+    */
+    captureEnemyPiece(originalFile, originalRank, destinationFile, destinationRank, piece) {
+        this.movePieceToEmptySquare(originalFile, originalRank, destinationFile, destinationRank, piece);
     }
 
     /*
@@ -500,6 +545,31 @@ class ChessboardClass {
             this.halfmoveClock = 0;
         } else {
             this.halfmoveClock++;
+        }
+    }
+
+    /*
+    * If the passed square is on the 8th rank for white, or the 1st rank for black, the pawn
+    * is promoting, so return true.
+    * 
+    * @param destinationRank - Number representing the square's rank
+    */
+    isPawnPromoting(destinationRank) {
+
+        debugger;
+
+        if(this.activeColor === "w") {
+            if(destinationRank === "8") {
+                return true;
+            }
+            return false;
+        }
+        // Active color must be black
+        else {
+            if(destinationRank === "1") {
+                return true;
+            }
+            return false;
         }
     }
 }

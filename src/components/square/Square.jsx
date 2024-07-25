@@ -98,8 +98,6 @@ function Square(props) {
     }
 
     const handleClick = () => {
-        // I want to make an alert saying we clicked on the square
-        alert("Clicked on " + file + rank);
         // Call the onClick function passed from the parent component
         onClick(rank, file, piece);
     };

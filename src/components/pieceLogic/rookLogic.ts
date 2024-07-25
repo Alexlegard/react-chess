@@ -19,13 +19,22 @@ export const moveRook = (originalSquare: any[], destinationSquare: any[], board:
     const asciiOfDestinationFile = destinationSquare[1].charCodeAt(0);
     const fileDiff = Math.abs(asciiOfOriginalFile - asciiOfDestinationFile);
 
-    if( rankDiff >= 1 && fileDiff == 0 ||
-        rankDiff == 0 && fileDiff >= 1
-     ) {
-        // Check if the destination square is empty, and the path to that square is empty.
-        if( board.isSquareEmpty(destinationSquare[1], destinationSquare[0]) && board.isPathEmpty(originalSquare, destinationSquare) ) {
-            alert("Destination square is empty and the path to that square is empty.");
-            board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+    const horizontalMove = rankDiff == 0 && fileDiff >= 1;
+    const verticalMove = rankDiff >= 1 && fileDiff == 0;
+
+    // Rooks may either move vertically or horizontally
+    if( horizontalMove || verticalMove ) {
+
+        // Check if the path to that square is empty
+        if(board.isPathEmpty(originalSquare, destinationSquare)) {
+            // If the destination square is empty, move there.
+            if( board.isSquareEmpty(destinationSquare[1], destinationSquare[0]) ) {
+                board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+            }
+            // If the square is occupied by an enemy piece, capture it.
+            if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+                board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+            }
         }
     }
 }

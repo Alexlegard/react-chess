@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Chessboard from './chessboard/Chessboard';
 import ChessboardClass from "../ChessboardClass";
+import PromotionPopup from './util/PromotionPopup.tsx';
 import { moveKnight } from './pieceLogic/knightLogic.ts';
 import { movePawn } from './pieceLogic/pawnLogic.ts';
 import { moveBishop } from './pieceLogic/bishopLogic.ts';
@@ -12,20 +13,20 @@ const Game = () => {
 
     const startingBoard = new ChessboardClass();
     const [chessboard, setChessboard] = useState(startingBoard);
-    //selectedPiece is an aarray: [rank, file, (letter representing the piece)]
+    //selectedPiece is an array: [rank, file, (letter representing the piece)]
     const [selectedPiece, setSelectedPiece] = useState(undefined);
+    const [isPromotionPending, setIsPromotionPending] = useState(false);
+    const [promotionData, setPromotionData] = useState(null);
 
     const onClick = function(rank, file, piece) {
         
         // If there's a selected piece, handle the move logic
         if (selectedPiece !== undefined) {
-            alert("There's already a selected piece.");
             handleMove(rank, file, selectedPiece[2]);
             return;
         }
 
         if(!piece) { // If there's no piece on clicked square, terminate the function
-            alert("Function terminated because there's no piece on clicked square.");
             return;
         }
         let pieceColor;
@@ -39,7 +40,6 @@ const Game = () => {
         if(pieceColor !== chessboard.getActiveColor()) {
             // If the clicked piece is not the same color as current
             // player, terminate the function.
-            alert(`Terminated because clicked piece is not the same color as active player. Piece color: ${pieceColor}. Active color: ${chessboard.getActiveColor()}`);
             return;
         }
         if(selectedPiece === undefined)  {
@@ -65,7 +65,7 @@ const Game = () => {
         // Run the appropriate function depending on which piece is being moved.
         switch(piece.toLowerCase()) {
             case "p":
-                movePawn(selectedPiece, destinationSquare, chessboard);
+                movePawn(selectedPiece, destinationSquare, chessboard, onPromotionNeeded);
                 break;
             case "r":
                 moveRook(selectedPiece, destinationSquare, chessboard);
@@ -88,10 +88,30 @@ const Game = () => {
         setSelectedPiece(undefined);
     }
 
+    const onPromotionNeeded = (destinationRank, destinationFile, color) => {
+        setIsPromotionPending(true);
+        setPromotionData([destinationRank, destinationFile, color]);
+    }
+
+    const handlePromotion = () => {
+        return null;
+    }
+
+    const handleCancelPromotion = () => {
+        return null;
+    }
+    //TODO: Finish the handlePromotion and handleCancelPromotion methods.
+
     return (
         <div className="game">
-            {/* Other components for displaying game information */}
             <Chessboard fen={chessboard.getFen()} board={chessboard.getBoard()} onClick={onClick} selectedPiece={selectedPiece} />
+            {isPromotionPending && (
+                <PromotionPopup
+                    onPromote={handlePromotion}
+                    onCancel={handleCancelPromotion}
+                    color={chessboard.getActiveColor()}
+                />
+            )}
         </div>
     );
 };
