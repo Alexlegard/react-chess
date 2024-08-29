@@ -29,6 +29,7 @@ export const moveRook = (originalSquare: any[], destinationSquare: any[], board:
         if(board.isPathEmpty(originalSquare, destinationSquare)) {
             // If the destination square is empty, move there.
             if( board.isSquareEmpty(destinationSquare[1], destinationSquare[0]) ) {
+                board.removeCastlingRights(board.activeColor, originalSquare);
                 board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
             }
             // If the square is occupied by an enemy piece, capture it.

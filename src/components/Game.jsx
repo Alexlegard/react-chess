@@ -19,6 +19,11 @@ const Game = () => {
     const [promotionData, setPromotionData] = useState(null);
 
     const onClick = function(rank, file, piece) {
+
+        // If promotion is pending, don't allow clicks (on the board)
+        if(isPromotionPending) {
+            return;
+        }
         
         // If there's a selected piece, handle the move logic
         if (selectedPiece !== undefined) {
@@ -93,14 +98,40 @@ const Game = () => {
         setPromotionData([destinationRank, destinationFile, color]);
     }
 
-    const handlePromotion = () => {
-        return null;
+    const handlePromotion = (piece) => {
+        switch(piece) {
+            case "q":
+                setIsPromotionPending(false);
+                chessboard.promotePawn(promotionData[0][1], promotionData[0][0], promotionData[1][1], promotionData[1][0], "q");
+                chessboard.deselectEnPassantTarget();
+                setPromotionData(null);
+                return;
+            case "r":
+                setIsPromotionPending(false);
+                chessboard.promotePawn(promotionData[0][1], promotionData[0][0], promotionData[1][1], promotionData[1][0], "r");
+                chessboard.deselectEnPassantTarget();
+                setPromotionData(null);
+                return;
+            case "n":
+                setIsPromotionPending(false);
+                chessboard.promotePawn(promotionData[0][1], promotionData[0][0], promotionData[1][1], promotionData[1][0], "n");
+                chessboard.deselectEnPassantTarget();
+                setPromotionData(null);
+                return;
+            case "b":
+                setIsPromotionPending(false);
+                chessboard.promotePawn(promotionData[0][1], promotionData[0][0], promotionData[1][1], promotionData[1][0], "b");
+                chessboard.deselectEnPassantTarget();
+                setPromotionData(null);
+                return;
+        }
     }
 
     const handleCancelPromotion = () => {
-        return null;
+        setIsPromotionPending(false);
+        setPromotionData(null);
+        return;
     }
-    //TODO: Finish the handlePromotion and handleCancelPromotion methods.
 
     return (
         <div className="game">
@@ -112,6 +143,10 @@ const Game = () => {
                     color={chessboard.getActiveColor()}
                 />
             )}
+            <div>whiteCanCastleKingside: {chessboard.whiteCanCastleKingside ? 'true' : 'false'}</div>
+            <div>whiteCanCastleQueenside: {chessboard.whiteCanCastleQueenside ? 'true' : 'false'}</div>
+            <div>blackCanCastleKingside: {chessboard.blackCanCastleKingside ? 'true' : 'false'}</div>
+            <div>blackCanCastleQueenside: {chessboard.blackCanCastleQueenside ? 'true' : 'false'}</div>
         </div>
     );
 };

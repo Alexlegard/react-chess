@@ -107,13 +107,115 @@ class ChessboardClass {
         return result;
     }
 
+    /* Removes castling rights the first time a king or rook moves.
+    *  Has only 1 parameter when a king moves, 2 when a rook moves.
+    *  
+    *  @param color - Color of the moved piece: "w" for white, "b" for black
+    *  @param rookOriginalSquare -  Optional parameter, the original square of the moved rook.
+    *
+    */
+    removeCastlingRights(color, rookOriginalSquare) {
+
+        debugger;
+
+        // King move remove castling logic
+        if(rookOriginalSquare === undefined) {
+            if(color === "w") {
+                this.whiteCanCastleKingside = false;
+                this.whiteCanCastleQueenside = false;
+                return;
+            } else {
+                this.blackCanCastleKingside = false;
+                this.blackCanCastleQueenside = false;
+                return;
+            }
+        }
+        // Rook move castling logic
+        let rookSquare = "";
+        rookSquare += rookOriginalSquare[1];
+        rookSquare += rookOriginalSquare[0];
+
+        alert(`rookSquare: ${rookSquare}`);
+
+        switch(rookSquare) {
+            case "a1":
+                this.whiteCanCastleQueenside = false;
+                return;
+            case "a8":
+                this.blackCanCastleQueenside = false;
+                return;
+            case "h1":
+                this.whiteCanCastleKingside = false;
+                return;
+            case "h8":
+                this.blackCanCastleKingside = false;
+                return;
+        }
+    }
+
+    castleWhiteKingside() {
+        // Clear the king and rook from their original squares.
+        this.board[7][4] = "";
+        this.board[7][7] = "";
+
+        // The king and rook appear on their new squares.
+        this.board[7][5] = "R";
+        this.board[7][6] = "K";
+
+        this.whiteCanCastleKingside = false;
+        this.whiteCanCastleQueenside = false;
+        this.nextHalfmove();
+    }
+
+    castleWhiteQueenside() {
+        // Clear the king and rook from their original squares.
+        this.board[7][0] = "";
+        this.board[7][4] = "";
+
+        // The king and rook appear on their new squares.
+        this.board[7][2] = "K";
+        this.board[7][3] = "R";
+
+        this.whiteCanCastleKingside = false;
+        this.whiteCanCastleQueenside = false;
+        this.nextHalfmove();
+    }
+
+    castleBlackKingside() {
+        // Clear the king and rook from their original squares.
+        this.board[0][4] = "";
+        this.board[0][7] = "";
+
+        // The king and rook appear on their new squares.
+        this.board[0][5] = "r";
+        this.board[0][6] = "k";
+
+        this.blackCanCastleKingside = false;
+        this.blackCanCastleQueenside = false;
+        this.nextHalfmove();
+    }
+
+    castleBlackQueenside() {
+        // Clear the king and rook from their original squares.
+        this.board[0][0] = "";
+        this.board[0][4] = "";
+
+        // The king and rook appear on their new squares.
+        this.board[0][2] = "k";
+        this.board[0][3] = "r";
+
+        this.blackCanCastleKingside = false;
+        this.blackCanCastleQueenside = false;
+        this.nextHalfmove();
+    }
+
     /* Checks if a square is empty.
     *
     * test params: "a", 3
     */
     isSquareEmpty(file, rank) {
         
-        debugger;
+        
 
         //Check if file is a string
         if (typeof file !== 'string') {
@@ -139,7 +241,7 @@ class ChessboardClass {
     */
     isSquareOccupiedByEnemyPiece(originalFile, originalRank, destinationFile, destinationRank, piece) {
 
-        debugger;
+        
         // Convert files (letters) into numeric values which are the correct index
         const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
         const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
@@ -174,7 +276,7 @@ class ChessboardClass {
     */
     isPathEmpty(originalSquare, destinationSquare) {
 
-        debugger;
+        
 
         // It's a file if the letters are the same, but the numbers are different
         if(originalSquare[1] === destinationSquare[1] && originalSquare[0] !== destinationSquare[0]) {
@@ -236,7 +338,7 @@ class ChessboardClass {
 
     isRankPathEmpty(originalSquare, destinationSquare) {
 
-        debugger;
+        
 
         let distance = undefined;
 
@@ -281,7 +383,7 @@ class ChessboardClass {
     */
     isDiagonalPathEmpty(originalSquare, destinationSquare) {
 
-        debugger;
+        
 
         // Calculate distance between both squares, and return true if the
         // distance between the 2 squares is 1 or 0
@@ -323,7 +425,7 @@ class ChessboardClass {
     * @param highSquare - square that's closer to the 8th rank ex. [4, "c"]
     */
     isBottomRightToTopLeftDiagonalEmpty(lowSquare, highSquare) {
-        debugger;
+        
 
         const lowFileIndex = lowSquare[1].toLowerCase().charCodeAt(0) - 97;
         const lowRankIndex = 8 - lowSquare[0];
@@ -349,7 +451,7 @@ class ChessboardClass {
     * @param highSquare - square that's closer to the 8th rank ex. [4, "c"]
     */
     isBottomLeftToTopRightDiagonalEmpty(lowSquare, highSquare) {
-        debugger;
+        
 
         const lowFileIndex = lowSquare[1].toLowerCase().charCodeAt(0) - 97;
         const lowRankIndex = 8 - lowSquare[0];
@@ -398,16 +500,26 @@ class ChessboardClass {
     // }
 
     getEnPassantTarget() {
+        debugger;
         return this.enPassantTarget;
     }
 
     getEnPassantTargetReadable() {
+        debugger;
         return this.enPassantTargetReadable;
     }
 
     setEnPassantTarget(file, rank) {
+        debugger;
         this.enPassantTarget = [file, rank];
-        this.enPassantTargetReadable = `${String.fromCharCode(96 + file)}${rank}`;
+        this.enPassantTargetReadable = `${file}${rank}`;
+        this.constructFenString();
+    }
+
+    deselectEnPassantTarget() {
+        debugger;
+        this.enPassantTarget = "-";
+        this.enPassantTargetReadable = "-";
         this.constructFenString();
     }
 
@@ -464,6 +576,7 @@ class ChessboardClass {
 
     // Update the class's fen string using the current class state
     constructFenString() {
+        debugger;
         // The fen string consists of six smaller strings: Piece placement, active color,
         // castling rights, en passant target, halfmove clock, and fullmove number.
         let piecePlacement = this.constructPiecePlacement();
@@ -488,7 +601,7 @@ class ChessboardClass {
     *   lowercase letter is a black piece.
     */
     movePieceToEmptySquare(originalFile, originalRank, destinationFile, destinationRank, piece) {
-
+        debugger;
         // Convert letter into a numeric value
         const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
         const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
@@ -521,7 +634,58 @@ class ChessboardClass {
     * The logic for capturing an enemy piece, in theory should be the same as moving to an empty square.
     */
     captureEnemyPiece(originalFile, originalRank, destinationFile, destinationRank, piece) {
+
         this.movePieceToEmptySquare(originalFile, originalRank, destinationFile, destinationRank, piece);
+
+        // After we make the move, we should check if we have to remove castling rights
+        // if we captured a rook on its home corner square.
+
+        if(this.whiteCanCastleQueenside && this.board[7][0] !== "R") {
+            this.whiteCanCastleQueenside = false;
+            return;
+        }
+        if(this.whiteCanCastleKingside && this.board[7][7] !== "R") {
+            this.whiteCanCastleKingside = false;
+            return;
+        }
+        if(this.blackCanCastleQueenside && this.board[0][0] !== "r") {
+            this.blackCanCastleQueenside = false;
+            return;
+        }
+        if(this.blackCanCastleKingside && this.board[0][7] !== "r") {
+            this.blackCanCastleKingside = false;
+            return;
+        }
+
+    }
+
+    /*
+    * Capture an enemy piece with a pawn en passant.
+    *
+    * @param originalSquare    - The pawn's original square ex. [5, "b"]
+    * @param destinationSquare - The pawn's destination ex. [6, "c"]
+    */
+    captureEnPassant(originalSquare, destinationSquare) {
+
+        // Remove the pawn behind the capturing pawn from the board.
+        let rank;
+        let file = destinationSquare[1].toLowerCase().charCodeAt(0) - 97;
+        if(this.activeColor === "w") {
+            rank = 3;
+        } else {
+            rank = 4;
+        }
+        this.board[rank][file] = "";
+
+        // Move the capturing pawn to the correct square.
+        if(this.activeColor === "w") {
+            this.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], "P");
+        }
+        else {
+            this.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], "p");
+        }
+        this.enPassantTarget = "-";
+        this.enPassantTargetReadable = "-";
     }
 
     /*
@@ -535,9 +699,6 @@ class ChessboardClass {
             this.activeColor = "w";
             this.fullmoveNumber++;
         }
-        // enPassantTarget is the capturable square via En Passant if the opponent moved a pawn
-        // two squares last move.
-        this.enPassantTarget = "-";
 
         // halfmoveClock is the number of halfmoves since the last piece capture or pawn move.
         // Used to enforce the 50-move rule.
@@ -556,7 +717,7 @@ class ChessboardClass {
     */
     isPawnPromoting(destinationRank) {
 
-        debugger;
+        
 
         if(this.activeColor === "w") {
             if(destinationRank === "8") {
@@ -571,6 +732,46 @@ class ChessboardClass {
             }
             return false;
         }
+    }
+
+    /*
+    * Function that actually promotes a pawn.
+    *
+    * @param originalSquare - the square the pawn is moving from.
+    * @param destinationSquare - the square the pawn is moving to.
+    * @param promotedPiece - the kind of piece the pawn is promoting to.
+    *   Accepted values are q, r, n, or b.
+    */
+    promotePawn(originalFile, originalRank, destinationFile, destinationRank, promotedPiece) {
+
+        debugger;
+
+        // Convert letter into a numeric value
+        const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
+        const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
+
+        // Correctly calculate the index for the ranks as well
+        const originalRankIndex = 8 - originalRank;
+        const destinationRankIndex = 8 - destinationRank;
+
+        // Whenever we move a piece, we turn the square it occupied into an empty square.
+        this.board[originalRankIndex][originalFileIndex] = "";
+
+        // Letter becomes uppercase if it's white's turn, or lowercase if it's black's turn.
+        if( this.activeColor === "w" ) {
+            promotedPiece = promotedPiece.toUpperCase();
+        } else {
+            promotedPiece = promotedPiece.toLowerCase();
+        }
+
+        // Then we have to change the destination square to "promotedPiece"
+        this.board[destinationRankIndex][destinationFileIndex] = promotedPiece;
+
+        // Whenever we move a piece, we also need to make sure we're performing a halfmove.
+        this.nextHalfmove();
+
+        this.constructFenString();
+        return;
     }
 }
 

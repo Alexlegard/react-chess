@@ -11,6 +11,9 @@ export const moveKing = (originalSquare: any[], destinationSquare: any[], board:
 
     debugger;
 
+    const originalSquareReadable = originalSquare[1] + originalSquare[0];
+    const destinationSquareReadable = destinationSquare[1] + destinationSquare[0];
+
     // Calculate the rank and file difference. If rankDiff + fileDiff = 1, the king can move (horizontally)
     // If rankDiff and fileDiff are 1, the king can move (diagonally)
     const rankDiff = Math.abs(originalSquare[0] - destinationSquare[0]);
@@ -25,11 +28,35 @@ export const moveKing = (originalSquare: any[], destinationSquare: any[], board:
     if( canMoveHorizontally || canMoveDiagonally ) {
         // Check if the destination square is empty
         if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+            board.removeCastlingRights(board.activeColor);
             board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
         }
         // Check if the destination square is occupied by an enemy piece.
         if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+            board.removeCastlingRights(board.activeColor);
             board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
         }
+    }
+
+    // Individually check for each of the four forms of castling.
+    if(originalSquareReadable === "e1" && destinationSquareReadable === "g1" &&
+        board.isSquareEmpty("f", 1) && board.isSquareEmpty("g", 1) && board.whiteCanCastleKingside
+    ) {
+        board.castleWhiteKingside();
+    }
+    if(originalSquareReadable === "e1" && destinationSquareReadable === "c1" &&
+        board.isSquareEmpty("c", 1) && board.isSquareEmpty("d", 1) && board.whiteCanCastleQueenside
+    ) {
+        board.castleWhiteQueenside();
+    }
+    if(originalSquareReadable === "e8" && destinationSquareReadable === "g8" &&
+        board.isSquareEmpty("f", 8) && board.isSquareEmpty("g", 8) && board.blackCanCastleKingside
+    ) {
+        board.castleBlackKingside();
+    }
+    if(originalSquareReadable === "e8" && destinationSquareReadable === "c8" &&
+        board.isSquareEmpty("c", 8) && board.isSquareEmpty("d", 8) && board.blackCanCastleQueenside
+    ) {
+        board.castleBlackQueenside();
     }
 }
