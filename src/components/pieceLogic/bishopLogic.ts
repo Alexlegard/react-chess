@@ -1,5 +1,5 @@
 import ChessboardClass from "../../ChessboardClass";
-
+import { validateMoveSafety } from "../../validateMoveSafety";
 /*
  * @param {Array} originalSquare - Array containing the rank and file of the knight's home square,
  *   and the letter n or N
@@ -11,6 +11,7 @@ import ChessboardClass from "../../ChessboardClass";
 export const moveBishop = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
     debugger;
+    
 
     // Calculate the rank and file difference, which we need to determine if both squares are on the same diagonal
     const rankDiff = Math.abs(originalSquare[0] - destinationSquare[0]);
@@ -19,18 +20,24 @@ export const moveBishop = (originalSquare: any[], destinationSquare: any[], boar
     const fileDiff = Math.abs(asciiOfOriginalFile - asciiOfDestinationFile);
 
     if(rankDiff === fileDiff && rankDiff > 0) {
+
         // Check if the path to that square is empty
         if(board.isPathEmpty(originalSquare, destinationSquare)) {
 
-            // If the destination square is empty, move to that square
-            if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
-                board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
-            }
+            // Simulate and test the move's safety
+            if(validateMoveSafety(board.board, [originalSquare[0], originalSquare[1]],
+                [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
 
-            // If it's occupied by an enemy piece, we need to do a capture
-            if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
-                debugger;
-                board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+                // If the destination square is empty, move to there
+                if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+                    board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+                }
+
+                // If it's occupied by an enemy piece, capture it
+                if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+                    debugger;
+                    board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+                }
             }
         }
     }

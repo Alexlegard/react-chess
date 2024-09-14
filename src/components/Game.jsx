@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import Chessboard from './chessboard/Chessboard';
-import ChessboardClass from "../ChessboardClass";
+import ChessboardClass from '../ChessboardClass';
 import PromotionPopup from './util/PromotionPopup.tsx';
 import { moveKnight } from './pieceLogic/knightLogic.ts';
 import { movePawn } from './pieceLogic/pawnLogic.ts';
@@ -143,10 +143,28 @@ const Game = () => {
                     color={chessboard.getActiveColor()}
                 />
             )}
-            <div>whiteCanCastleKingside: {chessboard.whiteCanCastleKingside ? 'true' : 'false'}</div>
-            <div>whiteCanCastleQueenside: {chessboard.whiteCanCastleQueenside ? 'true' : 'false'}</div>
-            <div>blackCanCastleKingside: {chessboard.blackCanCastleKingside ? 'true' : 'false'}</div>
-            <div>blackCanCastleQueenside: {chessboard.blackCanCastleQueenside ? 'true' : 'false'}</div>
+            <div className='debug' style={{ color: 'white' }}>
+                <div>White attacked squares:</div>
+                <div>{chessboard.whiteAttackedSquares[0]}</div>
+                <div>{chessboard.whiteAttackedSquares[1]}</div>
+                <div>{chessboard.whiteAttackedSquares[2]}</div>
+                <div>{chessboard.whiteAttackedSquares[3]}</div>
+                <div>{chessboard.whiteAttackedSquares[4]}</div>
+                <div>{chessboard.whiteAttackedSquares[5]}</div>
+                <div>{chessboard.whiteAttackedSquares[6]}</div>
+                <div>{chessboard.whiteAttackedSquares[7]}</div>
+                <div>Black attacked squares:</div>
+                <div>{chessboard.blackAttackedSquares[0]}</div>
+                <div>{chessboard.blackAttackedSquares[1]}</div>
+                <div>{chessboard.blackAttackedSquares[2]}</div>
+                <div>{chessboard.blackAttackedSquares[3]}</div>
+                <div>{chessboard.blackAttackedSquares[4]}</div>
+                <div>{chessboard.blackAttackedSquares[5]}</div>
+                <div>{chessboard.blackAttackedSquares[6]}</div>
+                <div>{chessboard.blackAttackedSquares[7]}</div>
+
+                //TODO: Organise the code in my ChessboardClass because it's getting a little long, at 700 lines...
+            </div>
         </div>
     );
 };

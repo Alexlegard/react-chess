@@ -370,7 +370,7 @@ class ChessboardClass {
 
         distance = asciiOfOriginalSquare - asciiOfDestinationSquare;
 
-        //Return true if distance between the 2 squares is 1 or 
+        //Return true if distance between the 2 squares is 1 or 0
         if(distance < 2) {
             return true;
         }
@@ -417,7 +417,9 @@ class ChessboardClass {
             return true;
         }
 
-        
+        // a file = 0, h file = 7
+        // 8th rank = 0, 1st rank = 7
+        // (there seems to be an off-by-1 error with this code)
         const originalFileIndex = originalSquare[1].toLowerCase().charCodeAt(0) - 96;
         const originalRankIndex = 8 - originalSquare[0];
         const destinationFileIndex = destinationSquare[1].toLowerCase().charCodeAt(0) - 96;
