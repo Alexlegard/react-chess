@@ -144,29 +144,16 @@ const Game = () => {
                 />
             )}
             <div className='debug' style={{ color: 'white' }}>
-                <div>White attacked squares:</div>
-                <div>{chessboard.whiteAttackedSquares[0]}</div>
-                <div>{chessboard.whiteAttackedSquares[1]}</div>
-                <div>{chessboard.whiteAttackedSquares[2]}</div>
-                <div>{chessboard.whiteAttackedSquares[3]}</div>
-                <div>{chessboard.whiteAttackedSquares[4]}</div>
-                <div>{chessboard.whiteAttackedSquares[5]}</div>
-                <div>{chessboard.whiteAttackedSquares[6]}</div>
-                <div>{chessboard.whiteAttackedSquares[7]}</div>
-                <div>Black attacked squares:</div>
-                <div>{chessboard.blackAttackedSquares[0]}</div>
-                <div>{chessboard.blackAttackedSquares[1]}</div>
-                <div>{chessboard.blackAttackedSquares[2]}</div>
-                <div>{chessboard.blackAttackedSquares[3]}</div>
-                <div>{chessboard.blackAttackedSquares[4]}</div>
-                <div>{chessboard.blackAttackedSquares[5]}</div>
-                <div>{chessboard.blackAttackedSquares[6]}</div>
-                <div>{chessboard.blackAttackedSquares[7]}</div>
-
-                //TODO: Organise the code in my ChessboardClass because it's getting a little long, at 700 lines...
+                <div>Nothing to debug right now...</div>
             </div>
         </div>
     );
 };
 
 export default Game;
+
+//TODO: I can make most moves ok, but I encounter errors in specific situations.
+//! Error when white tries to castle kingside.
+//! Error when black queen (f6) tries to capture the white knight (e5)
+//! Error when black knight (e4) tried to move out of the way in a situation where the white
+//! queen (e2) was absolutely pinning it to the king (e8).

@@ -24,18 +24,20 @@ export const moveBishop = (originalSquare: any[], destinationSquare: any[], boar
         // Check if the path to that square is empty
         if(board.isPathEmpty(originalSquare, destinationSquare)) {
 
-            // Simulate and test the move's safety
-            if(validateMoveSafety(board.board, [originalSquare[0], originalSquare[1]],
-                [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
+            
 
-                // If the destination square is empty, move to there
-                if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+            // If the destination square is empty, move to there
+            if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+                if(validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+                    [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
                     board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
                 }
+            }
 
-                // If it's occupied by an enemy piece, capture it
-                if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
-                    debugger;
+            // If it's occupied by an enemy piece, capture it
+            if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+                if(validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+                    [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
                     board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
                 }
             }

@@ -2,8 +2,8 @@
 * Determine if 2 squares on the same diagonal have an empty path between them.
 *
 * @param board- 2d array representing the board.
-* @param originalSquare- Array representing the original square.       eg. [1, "f"]
-* @param destinationSquare- Array representing the destination square. eg. [4, "c"]
+* @param originalSquare- Array representing the original square.       eg. [7, 5]
+* @param destinationSquare- Array representing the destination square. eg. [3, 2]
 */
 export function isDiagonalPathEmpty(board, originalSquare, destinationSquare) {
     debugger;
@@ -28,9 +28,9 @@ export function isDiagonalPathEmpty(board, originalSquare, destinationSquare) {
 
     // Call a different function for each direction of diagonal
     if(lowSquare[1] > highSquare[1]) {
-        return this.isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare);
+        return isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare);
     } else {
-        return this.isBottomLeftToTopRightDiagonalEmpty(board, lowSquare, highSquare);
+        return isBottomLeftToTopRightDiagonalEmpty(board, lowSquare, highSquare);
     }
 }
 
@@ -38,17 +38,14 @@ export function isDiagonalPathEmpty(board, originalSquare, destinationSquare) {
 * Returns true if a "\" shaped diagonal is empty.
 *
 * @param board- 2d array representing the board.
-* @param bottomRightSquare - Array representing the bottom right square. eg. [1, "f"]
-* @param topLeftSquare - Array representing the top left square. eg. [4, "c"]
+* @param bottomRightSquare - Array representing the bottom right square. eg. [7, 6]
+* @param topLeftSquare - Array representing the top left square. eg. [3, 2]
 */
 function isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare) {
     debugger;
-    const lowFileIndex = lowSquare[1].toLowerCase().charCodeAt(0) - 97;
-    const lowRankIndex = 8 - lowSquare[0];
-    const highFileIndex = highSquare[1].toLowerCase().charCodeAt(0) - 97;
-    const highRankIndex = 8 - highSquare[0];
+    alert(`${board} ${lowSquare} ${highSquare}`);
 
-    for( let rank = highRankIndex + 1, file = highFileIndex + 1; rank < lowRankIndex; rank++, file++ ) {
+    for( let rank = highSquare[0] + 1, file = highSquare[1] + 1; rank < lowSquare[0]; rank++, file++ ) {
 
         let square = board[rank][file];
 
@@ -65,19 +62,16 @@ function isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare) {
 * Returns true if a "/" shaped diagonal is empty.
 *
 * @param board- 2d array representing the board.
-* @param bottomLeftSquare - Array representing the bottom left square. eg. [1, "c"]
-* @param topRightSquare - Array representing the top right square. eg. [4, "f"]
+* @param bottomLeftSquare - Array representing the bottom left square. eg. [7, 2]
+* @param topRightSquare - Array representing the top right square. eg. [3, 6]
 */
 function isBottomLeftToTopRightDiagonalEmpty(board, lowSquare, highSquare) {
     debugger;
-    const lowFileIndex = lowSquare[1].toLowerCase().charCodeAt(0) - 97;
-    const lowRankIndex = 8 - lowSquare[0];
-    const highFileIndex = highSquare[1].toLowerCase().charCodeAt(0) - 97;
-    const highRankIndex = 8 - highSquare[0];
+    alert(`${board} ${lowSquare} ${highSquare}`);
 
-    for(let rank = highRankIndex + 1, file = highFileIndex - 1; rank < lowRankIndex; rank++, file--) {
+    for(let rank = highSquare[0] + 1, file = highSquare[1] - 1; rank < lowSquare[0]; rank++, file--) {
 
-        let square = this.board[rank][file];
+        let square = board[rank][file];
 
         if(square !== "") {
             return false;
@@ -161,7 +155,7 @@ export function isRankPathEmpty(board, originalSquare, destinationSquare) {
     for( let i = leftSquareFileIndex + 1; i < rightSquareFileIndex; i++ ) {
 
         let leftSquareLetter = leftSquare[1];
-        if (!this.isSquareEmpty(leftSquareLetter, i)) {
+        if (!board[leftSquareLetter][i] === "") {
             return false;
         }
     }

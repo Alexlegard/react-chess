@@ -57,6 +57,7 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
         const isBlackKingInDanger = canAnyWhitePieceAttackSquare(board, kingPosition);
         safeMove = !isBlackKingInDanger;
     }
+    alert("Successfully validated it is a safe move."); // Debug
     return safeMove;
 }
 
@@ -66,7 +67,6 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
 * @param kingPosition - position of the white king (rank, then file)
 */
 export function canAnyBlackPieceAttackSquare(board, kingPosition) {
-    
     debugger;
     for(let i = 0; i < 8; i++) {
         for(let j = 0; j < 8; j++) {
@@ -79,7 +79,7 @@ export function canAnyBlackPieceAttackSquare(board, kingPosition) {
                     break;
                 case "r":
                     // Check possible rook moves from this square
-                    if(canRookAttackSquare([i, j], kingPosition)) {
+                    if(canRookAttackSquare(board, [i, j], kingPosition)) {
                         return true;
                     }
                     break;
@@ -91,14 +91,14 @@ export function canAnyBlackPieceAttackSquare(board, kingPosition) {
                     break;
                 case "b":
                     // Check possible bishop moves from this square
-                    if(canBishopAttackSquare([i, j], kingPosition)) {
+                    if(canBishopAttackSquare(board, [i, j], kingPosition)) {
                         return true;
                     }
                     break;
                 case "q":
                     // Check possible queen moves (or rook moves + bishop moves)
                     // from this square
-                    if(canQueenAttackSquare([i, j], kingPosition)) {
+                    if(canQueenAttackSquare(board, [i, j], kingPosition)) {
                         return true;
                     }
                     break;
@@ -135,7 +135,7 @@ export function canAnyWhitePieceAttackSquare(board, kingPosition) {
                     break;
                 case "R":
                     // Check possible rook moves from this square
-                    if(canRookAttackSquare([i, j], kingPosition)) {
+                    if(canRookAttackSquare(board, [i, j], kingPosition)) {
                         return true;
                     }
                     break;
@@ -147,14 +147,14 @@ export function canAnyWhitePieceAttackSquare(board, kingPosition) {
                     break;
                 case "B":
                     // Check possible bishop moves from this square
-                    if(canBishopAttackSquare([i, j], kingPosition)) {
+                    if(canBishopAttackSquare(board, [i, j], kingPosition)) {
                         return true;
                     }
                     break;
                 case "Q":
                     // Check possible queen moves (or rook moves + bishop moves)
                     // from this square
-                    if(canQueenAttackSquare([i, j], kingPosition)) {
+                    if(canQueenAttackSquare(board, [i, j], kingPosition)) {
                         return true;
                     }
                     break;
@@ -202,7 +202,7 @@ function canKingAttackSquare(kingLocation, checkedSquare) {
     return oneSquareOrthogonal || oneSquareDiagonal;
 }
 
-function canBishopAttackSquare(bishopLocation, checkedSquare) {
+function canBishopAttackSquare(board, bishopLocation, checkedSquare) {
     debugger;
     // 1) Match the pattern of a bishop move
     const rankDiff = Math.abs(bishopLocation[0] - checkedSquare[0]);
@@ -213,13 +213,13 @@ function canBishopAttackSquare(bishopLocation, checkedSquare) {
     if(matchesBishopPattern) {
         // I will organise the isDiagonalPathEmpty, and other logic related to
         // sliding pieces, into my pathing module later.
-        const pathIsEmpty = isDiagonalPathEmpty(bishopLocation, checkedSquare);
+        const pathIsEmpty = isDiagonalPathEmpty(board, bishopLocation, checkedSquare);
         return pathIsEmpty;
     }
     return false;
 }
 
-function canRookAttackSquare(rookLocation, checkedSquare) {
+function canRookAttackSquare(board, rookLocation, checkedSquare) {
     debugger;
     // 1) The move matches the pattern of a rook move
     const rankDiff = Math.abs(rookLocation[0] - checkedSquare[0]);
@@ -232,19 +232,19 @@ function canRookAttackSquare(rookLocation, checkedSquare) {
     if(matchesRookPattern) {
         if(verticalMove) {
             // Function in my pathing module
-            return isFilePathEmpty(rookLocation, checkedSquare);
+            return isFilePathEmpty(board, rookLocation, checkedSquare);
         }
         if(horizontalMove) {
             // Function in my pathing module
-            return isRankPathEmpty(rookLocation, checkedSquare);
+            return isRankPathEmpty(board, rookLocation, checkedSquare);
         }
     }
     return false;
 }
 
-function canQueenAttackSquare(queenLocation, checkedSquare) {
+function canQueenAttackSquare(board, queenLocation, checkedSquare) {
     debugger;
-    return canRookAttackSquare(queenLocation, checkedSquare) || canBishopAttackSquare(queenLocation, checkedSquare);
+    return canRookAttackSquare(board, queenLocation, checkedSquare) || canBishopAttackSquare(board, queenLocation, checkedSquare);
 }
 
 /*
@@ -270,5 +270,6 @@ function validateEnPassantSafety(board, originalSquare, destinationSquare, activ
     // Derive the location of the pawn being captured, and clear that square
     board[originalRankIndex][destinationFileIndex] = "";
 
+    alert("Successfully validated it is a safe move."); // Debug
     return true;
 }
