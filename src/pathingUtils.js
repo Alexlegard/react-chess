@@ -43,7 +43,6 @@ export function isDiagonalPathEmpty(board, originalSquare, destinationSquare) {
 */
 function isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare) {
     debugger;
-    alert(`${board} ${lowSquare} ${highSquare}`);
 
     for( let rank = highSquare[0] + 1, file = highSquare[1] + 1; rank < lowSquare[0]; rank++, file++ ) {
 
@@ -67,7 +66,6 @@ function isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare) {
 */
 function isBottomLeftToTopRightDiagonalEmpty(board, lowSquare, highSquare) {
     debugger;
-    alert(`${board} ${lowSquare} ${highSquare}`);
 
     for(let rank = highSquare[0] + 1, file = highSquare[1] - 1; rank < lowSquare[0]; rank++, file--) {
 
@@ -121,18 +119,12 @@ export function isFilePathEmpty(board, originalSquare, destinationSquare) {
 * Returns true if the path between two squares on the same rank is clear.
 *
 * @param board- 2d array representing the board.
-* @param originalSquare- array representing the rook's original square. eg. [1, "a"]
-* @param destinationSquare- array representing the rook's destination. eg. [1, "c"]
+* @param originalSquare- array representing the rook's original square. eg. [7, 0]
+* @param destinationSquare- array representing the rook's destination. eg. [7, 2]
 */
 export function isRankPathEmpty(board, originalSquare, destinationSquare) {
     debugger;
-    let distance = undefined;
-
-    // To calculate the path between two squares on the same rank, we need to
-    // convert the files into numbers and subtract them.
-    const asciiOfOriginalSquare = originalSquare[1].charCodeAt(0) - 97;
-    const asciiOfDestinationSquare = destinationSquare[1].charCodeAt(0) - 97;
-    distance = asciiOfOriginalSquare - asciiOfDestinationSquare;
+    let distance = Math.abs(originalSquare[1] - destinationSquare[1]);
 
     //Return true if distance between the 2 squares is 1 or 0
     if(distance < 2) {
@@ -140,22 +132,20 @@ export function isRankPathEmpty(board, originalSquare, destinationSquare) {
     }
 
     // Determine leftSquare and rightSquare
-    let leftSquare, rightSquare, leftSquareFileIndex, rightSquareFileIndex;
-    if(asciiOfOriginalSquare < asciiOfDestinationSquare) {
+    let leftSquare, rightSquare;
+    if(originalSquare[1] < destinationSquare[1]) {
         leftSquare = originalSquare;
-        leftSquareFileIndex = leftSquare[1].charCodeAt(0) - 97;
         rightSquare = destinationSquare;
-        rightSquareFileIndex = rightSquare[1].charCodeAt(0) - 97;
     } else {
         leftSquare = destinationSquare;
         rightSquare = originalSquare;
     }
 
     // Loop through the squares on the rank
-    for( let i = leftSquareFileIndex + 1; i < rightSquareFileIndex; i++ ) {
+    for( let i = leftSquare[1] + 1; i < rightSquare[1]; i++ ) {
 
-        let leftSquareLetter = leftSquare[1];
-        if (!board[leftSquareLetter][i] === "") {
+        let leftSquareLetter = leftSquare[0];
+        if (board[leftSquareLetter][i] !== "") {
             return false;
         }
     }

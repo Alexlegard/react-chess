@@ -52,7 +52,6 @@ export const moveKing = (originalSquare: any[], destinationSquare: any[], board:
         !canAnyBlackPieceAttackSquare(board.board.map(row => [...row]), [7, 5]) &&
         !canAnyBlackPieceAttackSquare(board.board.map(row => [...row]), [7, 6])
     ) {
-        alert("Successfully checked if any black pieces can attack e1, f1, or g1.");
         board.castleWhiteKingside();
     }
     if(originalSquareReadable === "e1" && destinationSquareReadable === "c1" &&

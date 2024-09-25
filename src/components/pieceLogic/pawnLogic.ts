@@ -1,4 +1,6 @@
 import ChessboardClass from "../../ChessboardClass";
+import { validateMoveSafety } from "../../validateMoveSafety";
+
 /*
  * @param {Array} originalSquare - Array containing the rank, then file of the pawn's home square,
  *   and the letter p or P
@@ -23,12 +25,10 @@ export const movePawn = (
         pawnCanMoveTwoSquares = true;
     }
 
-    if(pawnCanMoveTwoSquares) {
-        
+    if(pawnCanMoveTwoSquares) {        
         makePawnFirstMove(originalSquare, destinationSquare, board);
     }
     else {
-        
         makePawnNonFirstMove(originalSquare, destinationSquare, board, onPromotionNeeded);
     }
 }
@@ -38,29 +38,39 @@ function makePawnFirstMove(originalSquare, destinationSquare, board) {
     debugger;
     // Check if the move matches the pattern of a forward pawn move.
     if(matchesPawnFirstMovePattern(originalSquare, destinationSquare, board)) {
-        
+
         // Check if the destination and the path to the destination square are empty
-        if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0]) && board.isPathEmpty(originalSquare, destinationSquare)) {
-        
-            // If the pawn moved 2 squares, set the en passant target to the square over which the pawn had moved over.
-            if(Math.abs(destinationSquare[0] - originalSquare[0]) === 2) {
-                let enPassantTargetRank;
-                if(board.activeColor === "w") {
-                    enPassantTargetRank = 3;
-                } else {
-                    enPassantTargetRank = 6;
-                }
-                board.setEnPassantTarget(originalSquare[1], enPassantTargetRank);
-            } else {
-                // Else we should disable en passant in case the other side's pawn had just moved.
-                debugger;
-                board.deselectEnPassantTarget();
-            }
-            board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+        if(!board.isSquareEmpty(destinationSquare[1], destinationSquare[0]) && board.isPathEmpty(originalSquare, destinationSquare)) {
+            return;
         }
+        
+        // Check if the move puts the player's king in danger
+        if(!validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+            [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
+            return;
+        }
+
+        // If the pawn moved 2 squares, set the en passant target to the square over which the pawn had moved over.
+        if(Math.abs(destinationSquare[0] - originalSquare[0]) === 2) {
+            let enPassantTargetRank;
+            if(board.activeColor === "w") {
+                enPassantTargetRank = 3;
+            } else {
+                enPassantTargetRank = 6;
+            }
+            board.setEnPassantTarget(originalSquare[1], enPassantTargetRank);
+        } else {
+            // Else we should disable en passant in case the other side's pawn had just moved.
+            debugger;
+            board.deselectEnPassantTarget();
+        }
+        board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
     }
     else if(matchesPawnCapturePattern(originalSquare, destinationSquare, board)) {
-        
+        if(!validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+            [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
+            return;
+        }
         board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
         board.deselectEnPassantTarget();
     }
@@ -76,29 +86,44 @@ function makePawnNonFirstMove(
     // Check if the move matches the pattern of a forward pawn move
     if(matchesPawnNonFirstMovePattern(originalSquare, destinationSquare, board)) {
         debugger;
-        // check if the square in front of the pawn is empty.
-        if(board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
-            debugger;
-            // Check if the pawn is moving to the promotion square. The board already knows whose turn it is.
-            if(board.isPawnPromoting(destinationSquare[0])) {
-                debugger;
-                onPromotionNeeded(originalSquare, destinationSquare, board.activeColor);
-                
-            } else {
-                debugger;
-                board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
-                board.deselectEnPassantTarget();
-                
-            }
+
+        // Return if the square in front of the pawn is not empty
+        if(!board.isSquareEmpty(destinationSquare[1], destinationSquare[0])) {
+            return;
         }
+
+        // Return if the move will put the player's king in danger
+        if(!validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+            [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
+            return;
+        }
+        
+        // Check if the pawn is moving to the promotion square. The board already knows whose turn it is.
+        if(board.isPawnPromoting(destinationSquare[0])) {
+            debugger;
+            onPromotionNeeded(originalSquare, destinationSquare, board.activeColor);
+            
+        } else {
+            debugger;
+            board.movePieceToEmptySquare(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
+            board.deselectEnPassantTarget();
+            
+        }
+        
     }
     // Check if the move is one square forward diagonally and the destination is occupied by an enemy piece.
     else if(matchesPawnCapturePattern(originalSquare, destinationSquare, board)) {
         debugger;
+        if(!validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+            [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
+            return;
+        }
         if(board.isPawnPromoting(destinationSquare[0])) {
             debugger;
             onPromotionNeeded(originalSquare, destinationSquare, board.activeColor);
-        } else {
+        }
+        
+        else {
             debugger;
             board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);
             board.deselectEnPassantTarget();
@@ -106,11 +131,13 @@ function makePawnNonFirstMove(
     }
     // Check if we can make an en passant capture.
     else if(matchesEnPassantPattern(originalSquare, destinationSquare, board)) {
+        if(!validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
+            [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
+            return;
+        }
         debugger;
-        //board.captureEnPassant(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0]);
+        board.captureEnPassant(originalSquare, destinationSquare);
     }
-    // We should always end by disabling En Passant
-    debugger;
 }
 
 function matchesEnPassantPattern(originalSquare, destinationSquare, board) {
@@ -144,11 +171,9 @@ function matchesEnPassantPattern(originalSquare, destinationSquare, board) {
     let isEnPassantTargetSquare = destinationSquareReadable === board.enPassantTargetReadable;
 
     if(forwardOneSquareDiagonal && isEnPassantTargetSquare) {
-        board.captureEnPassant(originalSquare, destinationSquare);
+        //board.captureEnPassant(originalSquare, destinationSquare);
+        return true;
     }
-
-
-    return true;
 }
 
 function matchesPawnFirstMovePattern(originalSquare, destinationSquare, board) {

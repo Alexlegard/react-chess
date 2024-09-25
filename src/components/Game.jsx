@@ -144,7 +144,7 @@ const Game = () => {
                 />
             )}
             <div className='debug' style={{ color: 'white' }}>
-                <div>Nothing to debug right now...</div>
+                <div>{chessboard.enPassantTarget}</div>
             </div>
         </div>
     );
@@ -152,8 +152,13 @@ const Game = () => {
 
 export default Game;
 
-//TODO: I can make most moves ok, but I encounter errors in specific situations.
-//! Error when white tries to castle kingside.
-//! Error when black queen (f6) tries to capture the white knight (e5)
-//! Error when black knight (e4) tried to move out of the way in a situation where the white
-//! queen (e2) was absolutely pinning it to the king (e8).
+//TODO: Implement checkmate detection and end the game
+//TODO: 1) Create the isCheckmateOrStalemate function
+//TODO: 2) isCheckmateOrStalemate calls findAValidMove to make sure there's at least
+//TODO: one valid move for the current player.
+//TODO: 3) This function tries every square until it finds a piece belonging to
+//TODO: that player. Then it calls the function getAllPossibleMovesForPiece.
+//TODO: 4) Depending on which piece it is passed, getAllPossibleMovesForPiece calls
+//TODO: the piece-specific function getAllPossiblePawnMoves, getAllPossibleRookMoves,
+//TODO: and so forth.
+//TODO: 5) I'll think about the specific details of these piece-specific functions later.

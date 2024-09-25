@@ -10,7 +10,7 @@ class ChessboardClass {
             ["P", "P", "P", "P", "P", "P", "P", "P"],
             ["R", "N", "B", "Q", "K", "B", "N", "R"]
         ];
-        this.startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        this.startingFen = "rnbqkbnr/pppppppp/8/8/KPr5/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         
         this.board = this.startingBoard;
         this.fen = this.startingFen;
@@ -188,6 +188,7 @@ class ChessboardClass {
         this.whiteCanCastleKingside = false;
         this.whiteCanCastleQueenside = false;
         this.nextHalfmove();
+        this.enPassantTarget = "-";
     }
 
     castleWhiteQueenside() {
@@ -202,6 +203,7 @@ class ChessboardClass {
         this.whiteCanCastleKingside = false;
         this.whiteCanCastleQueenside = false;
         this.nextHalfmove();
+        this.enPassantTarget = "-";
     }
 
     castleBlackKingside() {
@@ -216,6 +218,7 @@ class ChessboardClass {
         this.blackCanCastleKingside = false;
         this.blackCanCastleQueenside = false;
         this.nextHalfmove();
+        this.enPassantTarget = "-";
     }
 
     castleBlackQueenside() {
@@ -230,6 +233,7 @@ class ChessboardClass {
         this.blackCanCastleKingside = false;
         this.blackCanCastleQueenside = false;
         this.nextHalfmove();
+        this.enPassantTarget = "-";
     }
 
     /* Checks if a square is empty.
@@ -639,6 +643,11 @@ class ChessboardClass {
 
         // Whenever we move a piece, we also need to make sure we're performing a halfmove.
         this.nextHalfmove();
+
+        // Reset en passant target if necessary
+        if (piece !== "p" && piece !== "P") {
+            this.enPassantTarget = "-";
+        }
 
         this.constructFenString();
         return;

@@ -1,4 +1,5 @@
 import { isDiagonalPathEmpty, isRankPathEmpty, isFilePathEmpty } from './pathingUtils.js';
+
 /*
 * Returns true if the proposed move is safe and not putting their own king in danger.
 * 
@@ -12,7 +13,6 @@ import { isDiagonalPathEmpty, isRankPathEmpty, isFilePathEmpty } from './pathing
 * @param piece ------ Letter representing the piece to be moved. eg. "N" for white knight
 * @param activePlayer - Letter representing whose turn it is. Ei\ther "w" or "b".
 */
-
 export const validateMoveSafety = (board, originalSquare, destinationSquare, piece, activePlayer) => {
     let originalRank = 8 - originalSquare[0];
     let originalFile = originalSquare[1].charCodeAt(0) - 97;
@@ -46,7 +46,7 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
             break;
         }
     }
-    debugger;
+    //debugger;
     // Step 3: Check if any enemy piece can attack the square that the player's king is on.
     // Let "pathingUtils.js" take care of the complexities.
     if(activePlayer === "w") {
@@ -67,7 +67,7 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
 * @param kingPosition - position of the white king (rank, then file)
 */
 export function canAnyBlackPieceAttackSquare(board, kingPosition) {
-    debugger;
+    //debugger;
     for(let i = 0; i < 8; i++) {
         for(let j = 0; j < 8; j++) {
             switch(board[i][j]) {
@@ -123,7 +123,7 @@ export function canAnyBlackPieceAttackSquare(board, kingPosition) {
 */
 export function canAnyWhitePieceAttackSquare(board, kingPosition) {
 
-    debugger;
+    //debugger;
     for(let i = 0; i < 8; i++) {
         for(let j = 0; j < 8; j++) {
             switch(board[i][j]) {
@@ -173,28 +173,28 @@ export function canAnyWhitePieceAttackSquare(board, kingPosition) {
 }
 
 function canBlackPawnAttackSquare(pawnLocation, checkedSquare) {
-    debugger;
+    //debugger;
     const pawnIsOneRankForward = (pawnLocation[0] + 1 === checkedSquare[0]);
     const pawnIsOneFileToTheSide = pawnLocation[1] + 1 === checkedSquare[1] || pawnLocation[1] - 1 === checkedSquare[1];
     return pawnIsOneRankForward && pawnIsOneFileToTheSide;
 }
 
 function canWhitePawnAttackSquare(pawnLocation, checkedSquare) {
-    debugger;
+    //debugger;
     const pawnIsOneRankBack = (pawnLocation[0] - 1 === checkedSquare[0]);
     const pawnIsOneFileToTheSide = pawnLocation[1] + 1 === checkedSquare[1] || pawnLocation[1] - 1 === checkedSquare[1];
     return pawnIsOneRankBack && pawnIsOneFileToTheSide;
 }
 
 function canKnightAttackSquare(knightLocation, checkedSquare) {
-    debugger;
+    //debugger;
     const rankDiff = Math.abs(knightLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(knightLocation[1] - checkedSquare[1]);
     return (rankDiff === 2 && fileDiff === 1) || (rankDiff === 1 && fileDiff === 2);
 }
 
 function canKingAttackSquare(kingLocation, checkedSquare) {
-    debugger;
+    //debugger;
     const rankDiff = Math.abs(kingLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(kingLocation[1] - checkedSquare[1]);
     const oneSquareOrthogonal = (rankDiff + fileDiff === 1);
@@ -203,7 +203,7 @@ function canKingAttackSquare(kingLocation, checkedSquare) {
 }
 
 function canBishopAttackSquare(board, bishopLocation, checkedSquare) {
-    debugger;
+    //debugger;
     // 1) Match the pattern of a bishop move
     const rankDiff = Math.abs(bishopLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(bishopLocation[1] - checkedSquare[1]);
@@ -220,7 +220,7 @@ function canBishopAttackSquare(board, bishopLocation, checkedSquare) {
 }
 
 function canRookAttackSquare(board, rookLocation, checkedSquare) {
-    debugger;
+    //debugger;
     // 1) The move matches the pattern of a rook move
     const rankDiff = Math.abs(rookLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(rookLocation[1] - checkedSquare[1]);
@@ -243,7 +243,7 @@ function canRookAttackSquare(board, rookLocation, checkedSquare) {
 }
 
 function canQueenAttackSquare(board, queenLocation, checkedSquare) {
-    debugger;
+    //debugger;
     return canRookAttackSquare(board, queenLocation, checkedSquare) || canBishopAttackSquare(board, queenLocation, checkedSquare);
 }
 
