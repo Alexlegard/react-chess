@@ -46,7 +46,6 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
             break;
         }
     }
-    //debugger;
     // Step 3: Check if any enemy piece can attack the square that the player's king is on.
     // Let "pathingUtils.js" take care of the complexities.
     if(activePlayer === "w") {
@@ -57,7 +56,6 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
         const isBlackKingInDanger = canAnyWhitePieceAttackSquare(board, kingPosition);
         safeMove = !isBlackKingInDanger;
     }
-    alert("Successfully validated it is a safe move."); // Debug
     return safeMove;
 }
 
@@ -67,7 +65,6 @@ export const validateMoveSafety = (board, originalSquare, destinationSquare, pie
 * @param kingPosition - position of the white king (rank, then file)
 */
 export function canAnyBlackPieceAttackSquare(board, kingPosition) {
-    //debugger;
     for(let i = 0; i < 8; i++) {
         for(let j = 0; j < 8; j++) {
             switch(board[i][j]) {
@@ -123,7 +120,6 @@ export function canAnyBlackPieceAttackSquare(board, kingPosition) {
 */
 export function canAnyWhitePieceAttackSquare(board, kingPosition) {
 
-    //debugger;
     for(let i = 0; i < 8; i++) {
         for(let j = 0; j < 8; j++) {
             switch(board[i][j]) {
@@ -173,28 +169,24 @@ export function canAnyWhitePieceAttackSquare(board, kingPosition) {
 }
 
 function canBlackPawnAttackSquare(pawnLocation, checkedSquare) {
-    //debugger;
     const pawnIsOneRankForward = (pawnLocation[0] + 1 === checkedSquare[0]);
     const pawnIsOneFileToTheSide = pawnLocation[1] + 1 === checkedSquare[1] || pawnLocation[1] - 1 === checkedSquare[1];
     return pawnIsOneRankForward && pawnIsOneFileToTheSide;
 }
 
 function canWhitePawnAttackSquare(pawnLocation, checkedSquare) {
-    //debugger;
     const pawnIsOneRankBack = (pawnLocation[0] - 1 === checkedSquare[0]);
     const pawnIsOneFileToTheSide = pawnLocation[1] + 1 === checkedSquare[1] || pawnLocation[1] - 1 === checkedSquare[1];
     return pawnIsOneRankBack && pawnIsOneFileToTheSide;
 }
 
 function canKnightAttackSquare(knightLocation, checkedSquare) {
-    //debugger;
     const rankDiff = Math.abs(knightLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(knightLocation[1] - checkedSquare[1]);
     return (rankDiff === 2 && fileDiff === 1) || (rankDiff === 1 && fileDiff === 2);
 }
 
 function canKingAttackSquare(kingLocation, checkedSquare) {
-    //debugger;
     const rankDiff = Math.abs(kingLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(kingLocation[1] - checkedSquare[1]);
     const oneSquareOrthogonal = (rankDiff + fileDiff === 1);
@@ -203,7 +195,6 @@ function canKingAttackSquare(kingLocation, checkedSquare) {
 }
 
 function canBishopAttackSquare(board, bishopLocation, checkedSquare) {
-    //debugger;
     // 1) Match the pattern of a bishop move
     const rankDiff = Math.abs(bishopLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(bishopLocation[1] - checkedSquare[1]);
@@ -220,7 +211,6 @@ function canBishopAttackSquare(board, bishopLocation, checkedSquare) {
 }
 
 function canRookAttackSquare(board, rookLocation, checkedSquare) {
-    //debugger;
     // 1) The move matches the pattern of a rook move
     const rankDiff = Math.abs(rookLocation[0] - checkedSquare[0]);
     const fileDiff = Math.abs(rookLocation[1] - checkedSquare[1]);
@@ -243,7 +233,6 @@ function canRookAttackSquare(board, rookLocation, checkedSquare) {
 }
 
 function canQueenAttackSquare(board, queenLocation, checkedSquare) {
-    //debugger;
     return canRookAttackSquare(board, queenLocation, checkedSquare) || canBishopAttackSquare(board, queenLocation, checkedSquare);
 }
 

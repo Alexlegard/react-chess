@@ -28,6 +28,7 @@ const Game = () => {
         // If there's a selected piece, handle the move logic
         if (selectedPiece !== undefined) {
             handleMove(rank, file, selectedPiece[2]);
+            alert("Calling isCheckmateOrStalemate");
             return;
         }
 
