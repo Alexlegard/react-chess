@@ -1,3 +1,5 @@
+const { canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
+
 class ChessboardClass {
     constructor() {
         this.startingBoard = [
@@ -814,7 +816,7 @@ class ChessboardClass {
     isMate() {
         alert("calling isMate function");
 
-        let isThereAValidMove = this.findAValidMove();
+        let isThereAValidMove = this.findAValidMove(kingPosition);
 
         if(!isThereAValidMove && this.isPlayerChecked()) {
             if(this.activePlayer === "w") {
@@ -834,7 +836,7 @@ class ChessboardClass {
     /*
     * Returns true if there is a legal move for active player.
     */
-    findAValidMove() {
+    findAValidMove(kingPosition) {
         return true;
     }
 
@@ -842,7 +844,57 @@ class ChessboardClass {
     * Returns true if active player's king is under attack.
     */
     isPlayerChecked() {
-        return true;
+
+        let kingPosition;
+        if(this.activeColor === "w") {
+            kingPosition = this.findWhiteKing();
+            return this.isWhitePlayerChecked(kingPosition);
+        } else if(this.activeColor === "b") {
+            kingPosition = this.findBlackKing();
+            return this.isBlackPlayerChecked(kingPosition);
+        }
+    }
+
+    /*
+    * Returns true if the white player's king is under attack.
+    */
+    isWhitePlayerChecked(kingPosition) {
+        return canAnyBlackPieceAttackSquare(this.board, kingPosition);
+    }
+
+    /*
+    * Returns true if the black player's king is under attack.
+    */
+    isBlackPlayerChecked(kingPosition) {
+        return canAnyWhitePieceAttackSquare(this.board, kingPosition);
+    }
+
+    /*
+    * Returns an array containing indices of the white king's location
+    */
+    findWhiteKing() {
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                if(this.board[i][j] === "K") {
+                    return [i, j];
+                }
+            }
+        }
+        throw new Error("White King was not found.");
+    }
+
+    /*
+    * Returns an array containing indices of the black king's location
+    */
+    findBlackKing() {
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                if(this.board[i][j] === "k") {
+                    return [i, j];
+                }
+            }
+        }
+        throw new Error("Black King was not found.");
     }
     //TODO: Implement checkmate detection and end the game
     //TODO: 1) Create the isMate function
