@@ -10,8 +10,6 @@ import { validateMoveSafety } from "../../validateMoveSafety";
  */
 export const moveQueen = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
-    debugger;
-
     // Calculate the rank and file difference. The queen is a hybrid between a rook and bishop, so logically,
     // the condition that allows the queen to move should be a combination of the rook and bishop.
     // ie. (isRookMove) || (isBishopMove)

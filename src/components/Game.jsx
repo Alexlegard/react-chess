@@ -28,7 +28,6 @@ const Game = () => {
         // If there's a selected piece, handle the move logic
         if (selectedPiece !== undefined) {
             handleMove(rank, file, selectedPiece[2]);
-            alert("Calling isCheckmateOrStalemate");
             return;
         }
 
@@ -92,6 +91,7 @@ const Game = () => {
                 alert("Unknown piece type.");
         }
         setSelectedPiece(undefined);
+        if(chessboard.isMate()) { alert(`Game over! ${chessboard.result}`); }
     }
 
     const onPromotionNeeded = (destinationRank, destinationFile, color) => {

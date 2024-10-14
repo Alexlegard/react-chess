@@ -1,18 +1,18 @@
-const { canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
+const { validateMoveSafety, canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
 
 class ChessboardClass {
     constructor() {
         this.startingBoard = [
-            ["r", "n", "b", "q", "k", "b", "n", "r"],
+            ["r", "n", "b", "q", "k", "", "", "r"],
             ["p", "p", "p", "p", "p", "p", "p", "p"],
+            ["", "", "", "", "", "n", "", ""],
+            ["", "", "b", "", "p", "", "", "Q"],
+            ["", "", "B", "", "P", "", "", ""],
             ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["P", "P", "P", "P", "P", "P", "P", "P"],
-            ["R", "N", "B", "Q", "K", "B", "N", "R"]
+            ["P", "P", "P", "P", "", "P", "P", "P"],
+            ["R", "N", "B", "", "K", "", "N", "R"]
         ];
-        this.startingFen = "rnbqkbnr/pppppppp/8/8/KPr5/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        this.startingFen = "rnbqk2r/pppppQpp/8/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1";
         
         this.board = this.startingBoard;
         this.fen = this.startingFen;
@@ -604,7 +604,7 @@ class ChessboardClass {
 
     // Update the class's fen string using the current class state
     constructFenString() {
-        debugger;
+        
         // The fen string consists of six smaller strings: Piece placement, active color,
         // castling rights, en passant target, halfmove clock, and fullmove number.
         let piecePlacement = this.constructPiecePlacement();
@@ -629,7 +629,7 @@ class ChessboardClass {
     *   lowercase letter is a black piece.
     */
     movePieceToEmptySquare(originalFile, originalRank, destinationFile, destinationRank, piece) {
-        debugger;
+        
         // Convert letter into a numeric value
         const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
         const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
@@ -811,33 +811,142 @@ class ChessboardClass {
     * Returns "not mate" if there is no mate,
     * "checkmate" if active player won by checkmate,
     * or "stalemate" if active player stalemated their opponent.
-    * If there is a mate, modify this.victor to log the victor
+    * If there is a mate, modify this.result to log the game
+    * result.
     */
     isMate() {
+
+        debugger;
         alert("calling isMate function");
 
-        let isThereAValidMove = this.findAValidMove(kingPosition);
+        let kingPosition;
+        if(this.activeColor === "w") {
+            kingPosition = this.findWhiteKing();
+        } else if(this.activeColor === "b") {
+            kingPosition = this.findBlackKing();
+        }
+
+        let isThereAValidMove;
+        if(this.activeColor === "w") {
+            isThereAValidMove = this.findAValidWhiteMove(kingPosition);
+        } else if(this.activeColor === "b") {
+            isThereAValidMove = this.findAValidBlackMove(kingPosition);
+        }
 
         if(!isThereAValidMove && this.isPlayerChecked()) {
             if(this.activePlayer === "w") {
-                this.result = "b won by checkmate";
+                alert("Black won by checkmate");
+                this.result = "Black won by checkmate";
             } else {
-                this.result = "w won by checkmate";
+                alert("White won by checkmate");
+                this.result = "White won by checkmate";
             }
             return "checkmate";
         }
         if(!isThereAValidMove && !this.isPlayerChecked()) {
-            this.result = "stalemate";
-            return "stalemate";
+            alert("Game drawn by stalemate");
+            this.result = "Stalemate";
+            return "Stalemate";
         }
-        return "not mate";
+        return "Not mate";
+    }
+
+    //TODO: This function tries every square to see if there's a piece
+    //TODO: of the same color as active player. There will be a switch
+    //TODO: statement for various pieces then we should simulate all
+    //TODO: the possible moves for that piece.
+    /*
+    * Returns true if there is a legal move for white.
+    */
+    findAValidWhiteMove(kingPosition) {
+
+        let piece;
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                piece = this.board[i][j];
+                switch(piece) {
+                    case "P":
+                        if(this.findAValidWhitePawnMove()) {
+                            return true;
+                        }
+                        break;
+                    case "R":
+                        if(this.findAValidRookMove()) {
+                            return true;
+                        }
+                        break;
+                    case "N":
+                        if(this.findAValidRookMove()) {
+                            return true;
+                        }
+                        break;
+                    case "B":
+                        if(this.findAValidBishopMove()) {
+                            return true;
+                        }
+                        break;
+                    case "Q":
+                        if(this.findAValidQueenMove()) {
+                            return true;
+                        }
+                        break;
+                    case "K":
+                        if(this.findAValidKingMove()) {
+                            return true;
+                        }
+                        break;
+                    default: // Empty square or black piece
+                        break;
+                }
+            }
+        }
     }
 
     /*
-    * Returns true if there is a legal move for active player.
+    * Returns true if there is a legal move for black.
     */
-    findAValidMove(kingPosition) {
-        return true;
+    findAValidBlackMove(kingPosition) {
+        debugger;
+        let piece;
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                piece = this.board[i][j];
+                switch(piece) {
+                    case "p":
+                        if(this.findAValidBlackPawnMove([i, j])) {
+                            return true;
+                        }
+                        break;
+                    case "r":
+                        if(this.findAValidRookMove([i, j])) {
+                            return true;
+                        }
+                        break;
+                    case "n":
+                        if(this.findAValidKnightMove([i, j])) {
+                            return true;
+                        }
+                        break;
+                    case "b":
+                        if(this.findAValidBishopMove([i, j])) {
+                            return true;
+                        }
+                        break;
+                    case "q":
+                        if(this.findAValidQueenMove([i, j])) {
+                            return true;
+                        }
+                        break;
+                    case "k":
+                        if(this.findAValidKingMove([i, j])) {
+                            return true;
+                        }
+                        break;
+                    default: // Empty square or white piece
+                        break;
+                }
+            }
+        }
     }
 
     /*
@@ -896,16 +1005,248 @@ class ChessboardClass {
         }
         throw new Error("Black King was not found.");
     }
-    //TODO: Implement checkmate detection and end the game
-    //TODO: 1) Create the isMate function
-    //TODO: 2) isCheckmateOrStalemate calls findAValidMove to make sure there's at least
-    //TODO: one valid move for the current player.
-    //TODO: 3) This function tries every square until it finds a piece belonging to
-    //TODO: that player. Then it calls the function getAllPossibleMovesForPiece.
-    //TODO: 4) Depending on which piece it is passed, getAllPossibleMovesForPiece calls
-    //TODO: the piece-specific function getAllPossiblePawnMoves, getAllPossibleRookMoves,
-    //TODO: and so forth.
-    //TODO: 5) I'll think about the specific details of these piece-specific functions later.
+
+    //TODO: Finish the "findAValidPawnMove" function
+    //TODO: The game still runs but I'm still not detecting checkmate as intended. Why?
+
+    /*
+    * Returns true if a white pawn on the given square has a valid move.
+    *
+    * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
+    */
+    findAValidWhitePawnMove(pawnPosition) {
+        return true;
+    }
+
+    /*
+    * Returns true if a black pawn on the given square has a valid move.
+    *
+    * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
+    */
+    findAValidBlackPawnMove(pawnPosition) {
+        return true;
+    }
+
+    /*
+    * Returns true if a rook on the given square has a valid move.
+    * Let's say the rook can only capture black pieces if
+    * activeColor is w or white pieces if activeColor is b
+    * 
+    * @param rookPosition - coordinates of the rook. eg. [0, 7] is a1.
+    */
+    findAValidRookMove(rookPosition) {
+        debugger;
+        let candidateSquares = [];
+
+        // Helper function to determine if the coordinates are in bounds
+        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
+
+        let rookLetter;
+        if(this.activeColor === "w") {
+            rookLetter = "R";
+        } else if(this.activeColor === "b") {
+            rookLetter = "r";
+        }
+
+        let rank = rookPosition[0];
+        let file = rookPosition[1];
+
+        // Right rook moves
+        for(let i = 1; isInBounds(file + i); i++) {
+            candidateSquares.push(rank, file + i);
+        }
+
+        // Down rook moves
+        for(let i = 1; isInBounds(rank + i); i++) {
+            candidateSquares.push(rank + i, file);
+        }
+
+        // Left rook moves
+        for(let i = 1; isInBounds(file - i); i++) {
+            candidateSquares.push(rank, file - i);
+        }
+
+        // Up rook moves
+        for(let i = 1; isInBounds(rank - i); i++) {
+            candidateSquares.push(rank - i, file);
+        }
+    }
+
+    /*
+    * Returns true if a knight on the given square has a valid move.
+    *
+    * @param knightPosition - coordinates of the knight. eg. [1, 7] is b1.
+    */
+    findAValidKnightMove(knightPosition) {
+        debugger;
+        let candidateSquares = [];
+
+        // Helper function to determine if the coordinates are in bounds
+        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
+
+        let knightLetter;
+        if(this.activeColor === "w") {
+            knightLetter = "N";
+        } else if(this.activeColor === "b") {
+            knightLetter = "n";
+        }
+
+        let potentialMoves = [
+            [knightPosition[0] + 2, knightPosition[1] + 1],
+            [knightPosition[0] + 2, knightPosition[1] - 1],
+            [knightPosition[0] + 1, knightPosition[1] + 2],
+            [knightPosition[0] + 1, knightPosition[1] - 2],
+            [knightPosition[0] - 1, knightPosition[1] + 2],
+            [knightPosition[0] - 1, knightPosition[1] - 2],
+            [knightPosition[0] - 2, knightPosition[1] + 1],
+            [knightPosition[0] - 2, knightPosition[1] - 1]
+        ];
+
+        for(let move of potentialMoves) {
+            if(isInBounds(move[0], move[1])) {
+                if( this.board[move[0]][move[1]] === "" ) {
+                    candidateSquares.push(move);
+                }
+            }
+        }
+
+        // Loop through the candidate squares and simulate the knight move to each of them.
+        for(let square of candidateSquares) {
+            if(validateMoveSafety(this.board.map(row => [...row]), [knightPosition[0], knightPosition[1]],
+                [square[0], square[1]], knightLetter, this.activeColor)) {
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*
+    * Returns true if a bishop on the given square has a valid move.
+    *
+    * @param bishopPosition - coordinates of the bishop. eg. [2, 7] is c1.
+    */
+    findAValidBishopMove(bishopPosition) {
+        debugger;
+        let candidateSquares = [];
+
+        // Helper function to check if the square is in the bounds of the chessboard
+        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
+
+        let rank = bishopPosition[0];
+        let file = bishopPosition[1];
+
+        let bishopLetter;
+        if(this.activeColor === "w") {
+            bishopLetter = "B";
+        } else if(this.activeColor === "b") {
+            bishopLetter = "b";
+        }
+
+        // Down-right bishop moves
+        for(let i = 1; isInBounds(rank + i, file + i); i++) {
+            candidateSquares.push(rank + i, file + i);
+        }
+
+        // Down-left bishop moves
+        for(let i = 1; isInBounds(rank + i, file - i); i++) {
+            candidateSquares.push(rank + i, file - i);
+        }
+
+        // Up-right bishop moves
+        for(let i = 1; isInBounds(rank - i, file + i); i++) {
+            candidateSquares.push(rank - i, file + i);
+        }
+
+        // Up-left bishop moves
+        for(let i = 1; isInBounds(rank - i, file - i); i++) {
+            candidateSquares.push(rank - i, file - i);
+        }
+
+        // Loop through the candidate squares and simulate the bishop move to each of them.
+        for(let square of candidateSquares) {
+            if(validateMoveSafety(this.board.map(row => [...row]), [bishopPosition[0], bishopPosition[1]],
+                [square[0], square[1]], bishopLetter, this.activeColor)) {
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*
+    * Returns true of a queen on the given square has a valid move.
+    *
+    * @param queenPosition - coordinates of the queen. eg. [3, 7] is d1.
+    */
+    findAValidQueenMove(queenPosition) {
+        debugger;
+        if(this.findAValidRookMove || this.findAValidBishopMove) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    * Returns true of the king on the given square has a valid move.
+    *
+    * @param kingPosition - coordinates of the king. eg. [4, 7] is e1.
+    */
+    findAValidKingMove(kingPosition) {
+        debugger;
+        let candidateSquares = [];
+
+        // Helper function to check if the square is in the bounds of the chessboard
+        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
+
+        let rank = kingPosition[0];
+        let file = kingPosition[1];
+
+        let kingLetter;
+        if(this.activeColor === "w") {
+            kingLetter = "K";
+        } else if(this.activeColor === "b") {
+            kingLetter = "k";
+        }
+
+        let potentialMoves = [
+            kingPosition[0]+1, kingPosition[1]+1,
+            kingPosition[0]+1, kingPosition[1],
+            kingPosition[0]+1, kingPosition[1]-1,
+            kingPosition[0]-1, kingPosition[1]+1,
+            kingPosition[0]-1, kingPosition[1],
+            kingPosition[0]-1, kingPosition[1]-1,
+            kingPosition[0], kingPosition[1]+1,
+            kingPosition[0], kingPosition[1]-1
+        ];
+
+        for(let move of potentialMoves) {
+            if(isInBounds(move)) {
+                candidateSquares.push(move);
+            }
+        }
+
+        // Loop through the candidate squares and simulate the king move to each of them.
+        for(let square of candidateSquares) {
+            if(validateMoveSafety(this.board.map(row => [...row]), [kingPosition[0], kingPosition[1]],
+                [square[0], square[1]], kingLetter, this.activeColor)) {
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Implement checkmate detection and end the game
+    // 1) Create the isMate function
+    // 2) isCheckmateOrStalemate calls findAValidMove to make sure there's at least
+    // one valid move for the current player.
+    // 3) This function tries every square until it finds a piece belonging to
+    // that player. Then it calls the function getAllPossibleMovesForPiece.
+    // 4) Depending on which piece it is passed, getAllPossibleMovesForPiece calls
+    // the piece-specific function getAllPossiblePawnMoves, getAllPossibleRookMoves,
+    // and so forth.
+    // 5) I'll think about the specific details of these piece-specific functions later.
 }
 
 module.exports = ChessboardClass;
