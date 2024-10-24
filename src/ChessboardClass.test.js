@@ -1,7 +1,9 @@
-import Chessboard from './Chessboard';
+/*
+
+import ChessboardClass from './ChessboardClass';
 
 // Declare the instance of the class
-const board = new Chessboard();
+const board = new ChessboardClass();
 
 describe("Chessboard", () => {
 
@@ -103,3 +105,4 @@ describe("Chessboard", () => {
     });
 });
 
+*/

@@ -1,3 +1,4 @@
+const { indexToLetter } = require('./utils.js');
 const { validateMoveSafety, canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
 
 class ChessboardClass {
@@ -160,8 +161,6 @@ class ChessboardClass {
         let rookSquare = "";
         rookSquare += rookOriginalSquare[1];
         rookSquare += rookOriginalSquare[0];
-
-        alert(`rookSquare: ${rookSquare}`);
 
         switch(rookSquare) {
             case "a1":
@@ -817,7 +816,6 @@ class ChessboardClass {
     isMate() {
 
         debugger;
-        alert("calling isMate function");
 
         let kingPosition;
         if(this.activeColor === "w") {
@@ -863,6 +861,7 @@ class ChessboardClass {
         let piece;
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
+                alert(`Simulating board[${i}][${j}]`);
                 piece = this.board[i][j];
                 switch(piece) {
                     case "P":
@@ -900,6 +899,7 @@ class ChessboardClass {
                 }
             }
         }
+        return false;
     }
 
     /*
@@ -947,6 +947,7 @@ class ChessboardClass {
                 }
             }
         }
+        return false;
     }
 
     /*
@@ -1070,6 +1071,13 @@ class ChessboardClass {
         for(let i = 1; isInBounds(rank - i); i++) {
             candidateSquares.push(rank - i, file);
         }
+
+        for(let square of candidateSquares) {
+            if(validateMoveSafety(this.board, rookPosition, [...square], rookLetter, this.activeColor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -1110,14 +1118,15 @@ class ChessboardClass {
             }
         }
 
-        // Loop through the candidate squares and simulate the knight move to each of them.
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), [knightPosition[0], knightPosition[1]],
-                [square[0], square[1]], knightLetter, this.activeColor)) {
-                    return true;
+            const convertedOriginalSquare = [knightPosition[0], indexToLetter(knightPosition[1])];
+            const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
+            alert(`Params: ${[...this.board]}, ${convertedOriginalSquare}, ${convertedDestinationSquare}, ${knightLetter}, ${this.activeColor}`);
+            if(validateMoveSafety(this.board, convertedOriginalSquare, convertedDestinationSquare, knightLetter, this.activeColor)) {
+                alert("Validated");
+                return true;
             }
         }
-
         return false;
     }
 
@@ -1163,14 +1172,6 @@ class ChessboardClass {
             candidateSquares.push(rank - i, file - i);
         }
 
-        // Loop through the candidate squares and simulate the bishop move to each of them.
-        for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), [bishopPosition[0], bishopPosition[1]],
-                [square[0], square[1]], bishopLetter, this.activeColor)) {
-                    return true;
-            }
-        }
-
         return false;
     }
 
@@ -1184,6 +1185,7 @@ class ChessboardClass {
         if(this.findAValidRookMove || this.findAValidBishopMove) {
             return true;
         }
+        
         return false;
     }
 
@@ -1223,14 +1225,6 @@ class ChessboardClass {
         for(let move of potentialMoves) {
             if(isInBounds(move)) {
                 candidateSquares.push(move);
-            }
-        }
-
-        // Loop through the candidate squares and simulate the king move to each of them.
-        for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), [kingPosition[0], kingPosition[1]],
-                [square[0], square[1]], kingLetter, this.activeColor)) {
-                    return true;
             }
         }
 

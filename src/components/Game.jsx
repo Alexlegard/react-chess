@@ -91,7 +91,8 @@ const Game = () => {
                 alert("Unknown piece type.");
         }
         setSelectedPiece(undefined);
-        if(chessboard.isMate()) { alert(`Game over! ${chessboard.result}`); }
+        chessboard.isMate();
+        alert(chessboard.result);
     }
 
     const onPromotionNeeded = (destinationRank, destinationFile, color) => {
