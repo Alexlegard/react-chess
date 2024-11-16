@@ -899,7 +899,7 @@ class ChessboardClass {
     /*
     * Returns true if there is a legal move for black.
     */
-    findAValidBlackMove(kingPosition) {
+    findAValidBlackMove() {
         let piece;
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
@@ -1134,6 +1134,8 @@ class ChessboardClass {
         } else if(this.activeColor === "b") {
             knightLetter = "n";
         }
+        let whiteKnight = knightLetter === "N";
+        let blackKnight = knightLetter === "n";
 
         let potentialMoves = [
             [knightPosition[0] + 2, knightPosition[1] + 1],
@@ -1148,8 +1150,17 @@ class ChessboardClass {
 
         for(let move of potentialMoves) {
             if(isInBounds(move[0], move[1])) {
-                if( this.board[move[0]][move[1]] === "" ) {
-                    candidateSquares.push(move);
+                let thisSq = this.board[move[0]][move[1]];
+                let isEmpty = move === "";
+                let isUpperCase = thisSq === thisSq.toUpperCase();
+                let isLowerCase = thisSq === thisSq.toLowerCase();
+                
+                if(whiteKnight && (isEmpty || isLowerCase)) {
+                    candidateSquares.push([8 - move[0], indexToLetter(move[1])]);
+                }
+                
+                else if(blackKnight && (isEmpty || isUpperCase)) {
+                    candidateSquares.push([8 - move[0], indexToLetter(move[1])]);
                 }
             }
         }
