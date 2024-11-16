@@ -1028,7 +1028,7 @@ class ChessboardClass {
             candidateSquares.push([pawnPosition[0], pawnPosition[1]-1]);
         }
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board, pawnPosition, [...square], "P", this.activeColor)) {
+            if(validateMoveSafety(this.board.map(row => [...row]), pawnPosition, [...square], "P", this.activeColor)) {
                 return true;
             }
         }
@@ -1058,7 +1058,7 @@ class ChessboardClass {
         ];
 
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board, modPawnPosition, [...square], "p", this.activeColor)) {
+            if(validateMoveSafety(this.board.map(row => [...row]), modPawnPosition, [...square], "p", this.activeColor)) {
                 return true;
             }
         }
@@ -1109,7 +1109,7 @@ class ChessboardClass {
         }
 
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board, rookPosition, [...square], rookLetter, this.activeColor)) {
+            if(validateMoveSafety(this.board.map(row => [...row]), rookPosition, [...square], rookLetter, this.activeColor)) {
                 return true;
             }
         }
@@ -1121,6 +1121,7 @@ class ChessboardClass {
     *
     * @param knightPosition - coordinates of the knight. eg. [1, 7] is b1.
     */
+   //TODO: Make sure this function is actually generating valid knight moves
     findAValidKnightMove(knightPosition) {
         let candidateSquares = [];
 
@@ -1264,12 +1265,20 @@ class ChessboardClass {
             [kingPosition[0], kingPosition[1]-1]
         ];
 
+        // Push each of these 8 squares if they are in bounds.
         for(let move of potentialMoves) {
             if(isInBounds(move)) {
                 candidateSquares.push(move);
             }
         }
 
+        for(let square of candidateSquares) {
+            const convertedOriginalSquare = [8 - kingPosition[0], indexToLetter(kingPosition[1])];
+            const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, convertedDestinationSquare, kingLetter, this.activeColor)) {
+                return true;
+            }
+        }
         return false;
     }
 
