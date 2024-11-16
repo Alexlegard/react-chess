@@ -5,7 +5,7 @@ class ChessboardClass {
     constructor() {
         this.startingBoard = [
             ["r", "n", "b", "q", "k", "", "", "r"],
-            ["p", "p", "p", "p", "p", "p", "p", "p"],
+            ["p", "p", "p", "p", "", "p", "p", "p"],
             ["", "", "", "", "", "n", "", ""],
             ["", "", "b", "", "p", "", "", "Q"],
             ["", "", "B", "", "P", "", "", ""],
@@ -143,7 +143,7 @@ class ChessboardClass {
     */
     removeCastlingRights(color, rookOriginalSquare) {
 
-        debugger;
+        
 
         // King move remove castling logic
         if(rookOriginalSquare === undefined) {
@@ -527,24 +527,24 @@ class ChessboardClass {
     // }
 
     getEnPassantTarget() {
-        debugger;
+        
         return this.enPassantTarget;
     }
 
     getEnPassantTargetReadable() {
-        debugger;
+        
         return this.enPassantTargetReadable;
     }
 
     setEnPassantTarget(file, rank) {
-        debugger;
+        
         this.enPassantTarget = [file, rank];
         this.enPassantTargetReadable = `${file}${rank}`;
         this.constructFenString();
     }
 
     deselectEnPassantTarget() {
-        debugger;
+        
         this.enPassantTarget = "-";
         this.enPassantTargetReadable = "-";
         this.constructFenString();
@@ -776,8 +776,6 @@ class ChessboardClass {
     */
     promotePawn(originalFile, originalRank, destinationFile, destinationRank, promotedPiece) {
 
-        debugger;
-
         // Convert letter into a numeric value
         const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
         const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
@@ -814,8 +812,6 @@ class ChessboardClass {
     * result.
     */
     isMate() {
-
-        debugger;
 
         let kingPosition;
         if(this.activeColor === "w") {
@@ -857,40 +853,38 @@ class ChessboardClass {
     * Returns true if there is a legal move for white.
     */
     findAValidWhiteMove(kingPosition) {
-
         let piece;
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
-                alert(`Simulating board[${i}][${j}]`);
                 piece = this.board[i][j];
                 switch(piece) {
                     case "P":
-                        if(this.findAValidWhitePawnMove()) {
+                        if(this.findAValidWhitePawnMove([i, j])) {
                             return true;
                         }
                         break;
                     case "R":
-                        if(this.findAValidRookMove()) {
+                        if(this.findAValidRookMove([i, j])) {
                             return true;
                         }
                         break;
                     case "N":
-                        if(this.findAValidRookMove()) {
+                        if(this.findAValidRookMove([i, j])) {
                             return true;
                         }
                         break;
                     case "B":
-                        if(this.findAValidBishopMove()) {
+                        if(this.findAValidBishopMove([i, j])) {
                             return true;
                         }
                         break;
                     case "Q":
-                        if(this.findAValidQueenMove()) {
+                        if(this.findAValidQueenMove([i, j])) {
                             return true;
                         }
                         break;
                     case "K":
-                        if(this.findAValidKingMove()) {
+                        if(this.findAValidKingMove([i, j])) {
                             return true;
                         }
                         break;
@@ -906,7 +900,6 @@ class ChessboardClass {
     * Returns true if there is a legal move for black.
     */
     findAValidBlackMove(kingPosition) {
-        debugger;
         let piece;
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
@@ -916,33 +909,40 @@ class ChessboardClass {
                         if(this.findAValidBlackPawnMove([i, j])) {
                             return true;
                         }
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "r":
                         if(this.findAValidRookMove([i, j])) {
                             return true;
                         }
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "n":
                         if(this.findAValidKnightMove([i, j])) {
                             return true;
                         }
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "b":
                         if(this.findAValidBishopMove([i, j])) {
                             return true;
                         }
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "q":
                         if(this.findAValidQueenMove([i, j])) {
                             return true;
                         }
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "k":
                         if(this.findAValidKingMove([i, j])) {
                             return true;
                         }
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     default: // Empty square or white piece
+                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                 }
             }
@@ -1007,7 +1007,7 @@ class ChessboardClass {
         throw new Error("Black King was not found.");
     }
 
-    //TODO: Finish the "findAValidPawnMove" function
+    //TODO: Finish the "findAValidWhitePawnMove" and "findAValidBlackPawnMove" function
     //TODO: The game still runs but I'm still not detecting checkmate as intended. Why?
 
     /*
@@ -1016,7 +1016,23 @@ class ChessboardClass {
     * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
     */
     findAValidWhitePawnMove(pawnPosition) {
-        return true;
+        let candidateSquares = [];
+        
+        if(pawnPosition[1] === 6) {
+            // The white pawn is on the second rank, meaning it can move two squares
+            candidateSquares.push([pawnPosition[0], 5]);
+            candidateSquares.push([pawnPosition[0], 4]);
+        }
+        else {
+            // The white pawn is on another rank, meaning it can only move one square.
+            candidateSquares.push([pawnPosition[0], pawnPosition[1]-1]);
+        }
+        for(let square of candidateSquares) {
+            if(validateMoveSafety(this.board, pawnPosition, [...square], "P", this.activeColor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -1025,7 +1041,28 @@ class ChessboardClass {
     * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
     */
     findAValidBlackPawnMove(pawnPosition) {
-        return true;
+        let candidateSquares = [];
+
+        if(pawnPosition[0] === 1) {
+            // The black pawn is on the seventh rank, meaning it can move two squares
+            candidateSquares.push([6, String.fromCharCode(97 + pawnPosition[1])]);
+            candidateSquares.push([5, String.fromCharCode(97 + pawnPosition[1])]);
+        }
+        else {
+            // The black pawn is on another rank, meaning it can only move one square.
+            candidateSquares.push([6, pawnPosition[0]]);
+        }
+        let modPawnPosition = [
+            8 - pawnPosition[0],
+            String.fromCharCode(97 + pawnPosition[1])
+        ];
+
+        for(let square of candidateSquares) {
+            if(validateMoveSafety(this.board, modPawnPosition, [...square], "p", this.activeColor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -1036,7 +1073,6 @@ class ChessboardClass {
     * @param rookPosition - coordinates of the rook. eg. [0, 7] is a1.
     */
     findAValidRookMove(rookPosition) {
-        debugger;
         let candidateSquares = [];
 
         // Helper function to determine if the coordinates are in bounds
@@ -1054,22 +1090,22 @@ class ChessboardClass {
 
         // Right rook moves
         for(let i = 1; isInBounds(file + i); i++) {
-            candidateSquares.push(rank, file + i);
+            candidateSquares.push([rank, file + i]);
         }
 
         // Down rook moves
         for(let i = 1; isInBounds(rank + i); i++) {
-            candidateSquares.push(rank + i, file);
+            candidateSquares.push([rank + i, file]);
         }
 
         // Left rook moves
         for(let i = 1; isInBounds(file - i); i++) {
-            candidateSquares.push(rank, file - i);
+            candidateSquares.push([rank, file - i]);
         }
 
         // Up rook moves
         for(let i = 1; isInBounds(rank - i); i++) {
-            candidateSquares.push(rank - i, file);
+            candidateSquares.push([rank - i, file]);
         }
 
         for(let square of candidateSquares) {
@@ -1086,7 +1122,6 @@ class ChessboardClass {
     * @param knightPosition - coordinates of the knight. eg. [1, 7] is b1.
     */
     findAValidKnightMove(knightPosition) {
-        debugger;
         let candidateSquares = [];
 
         // Helper function to determine if the coordinates are in bounds
@@ -1119,11 +1154,9 @@ class ChessboardClass {
         }
 
         for(let square of candidateSquares) {
-            const convertedOriginalSquare = [knightPosition[0], indexToLetter(knightPosition[1])];
+            const convertedOriginalSquare = [8 - knightPosition[0], indexToLetter(knightPosition[1])];
             const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
-            alert(`Params: ${[...this.board]}, ${convertedOriginalSquare}, ${convertedDestinationSquare}, ${knightLetter}, ${this.activeColor}`);
-            if(validateMoveSafety(this.board, convertedOriginalSquare, convertedDestinationSquare, knightLetter, this.activeColor)) {
-                alert("Validated");
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, convertedDestinationSquare, knightLetter, this.activeColor)) {
                 return true;
             }
         }
@@ -1136,7 +1169,6 @@ class ChessboardClass {
     * @param bishopPosition - coordinates of the bishop. eg. [2, 7] is c1.
     */
     findAValidBishopMove(bishopPosition) {
-        debugger;
         let candidateSquares = [];
 
         // Helper function to check if the square is in the bounds of the chessboard
@@ -1154,24 +1186,31 @@ class ChessboardClass {
 
         // Down-right bishop moves
         for(let i = 1; isInBounds(rank + i, file + i); i++) {
-            candidateSquares.push(rank + i, file + i);
+            candidateSquares.push([rank + i, file + i]);
         }
 
         // Down-left bishop moves
         for(let i = 1; isInBounds(rank + i, file - i); i++) {
-            candidateSquares.push(rank + i, file - i);
+            candidateSquares.push([rank + i, file - i]);
         }
 
         // Up-right bishop moves
         for(let i = 1; isInBounds(rank - i, file + i); i++) {
-            candidateSquares.push(rank - i, file + i);
+            candidateSquares.push([rank - i, file + i]);
         }
 
         // Up-left bishop moves
         for(let i = 1; isInBounds(rank - i, file - i); i++) {
-            candidateSquares.push(rank - i, file - i);
+            candidateSquares.push([rank - i, file - i]);
         }
 
+        for(let square of candidateSquares) {
+            const convertedOriginalSquare = [8 - bishopPosition[0], indexToLetter(bishopPosition[1])];
+            const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, convertedDestinationSquare, bishopLetter, this.activeColor)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1180,9 +1219,12 @@ class ChessboardClass {
     *
     * @param queenPosition - coordinates of the queen. eg. [3, 7] is d1.
     */
+   //TODO: This function seems super problematic
     findAValidQueenMove(queenPosition) {
-        debugger;
-        if(this.findAValidRookMove || this.findAValidBishopMove) {
+        if(this.findAValidRookMove([queenPosition[0], queenPosition[1]])) {
+            return true;    
+        }
+        if(this.findAValidBishopMove([queenPosition[0], queenPosition[1]])) {
             return true;
         }
         
@@ -1195,7 +1237,7 @@ class ChessboardClass {
     * @param kingPosition - coordinates of the king. eg. [4, 7] is e1.
     */
     findAValidKingMove(kingPosition) {
-        debugger;
+        
         let candidateSquares = [];
 
         // Helper function to check if the square is in the bounds of the chessboard
@@ -1212,14 +1254,14 @@ class ChessboardClass {
         }
 
         let potentialMoves = [
-            kingPosition[0]+1, kingPosition[1]+1,
-            kingPosition[0]+1, kingPosition[1],
-            kingPosition[0]+1, kingPosition[1]-1,
-            kingPosition[0]-1, kingPosition[1]+1,
-            kingPosition[0]-1, kingPosition[1],
-            kingPosition[0]-1, kingPosition[1]-1,
-            kingPosition[0], kingPosition[1]+1,
-            kingPosition[0], kingPosition[1]-1
+            [kingPosition[0]+1, kingPosition[1]+1],
+            [kingPosition[0]+1, kingPosition[1]],
+            [kingPosition[0]+1, kingPosition[1]-1],
+            [kingPosition[0]-1, kingPosition[1]+1],
+            [kingPosition[0]-1, kingPosition[1]],
+            [kingPosition[0]-1, kingPosition[1]-1],
+            [kingPosition[0], kingPosition[1]+1],
+            [kingPosition[0], kingPosition[1]-1]
         ];
 
         for(let move of potentialMoves) {

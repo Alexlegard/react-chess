@@ -6,7 +6,6 @@
 * @param destinationSquare- Array representing the destination square. eg. [3, 2]
 */
 export function isDiagonalPathEmpty(board, originalSquare, destinationSquare) {
-    debugger;
     let distance = Math.abs(originalSquare[0] - destinationSquare[0]);
 
     if(distance < 2) {
@@ -42,7 +41,6 @@ export function isDiagonalPathEmpty(board, originalSquare, destinationSquare) {
 * @param topLeftSquare - Array representing the top left square. eg. [3, 2]
 */
 function isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare) {
-    debugger;
 
     for( let rank = highSquare[0] + 1, file = highSquare[1] + 1; rank < lowSquare[0]; rank++, file++ ) {
 
@@ -65,7 +63,6 @@ function isBottomRightToTopLeftDiagonalEmpty(board, lowSquare, highSquare) {
 * @param topRightSquare - Array representing the top right square. eg. [3, 6]
 */
 function isBottomLeftToTopRightDiagonalEmpty(board, lowSquare, highSquare) {
-    debugger;
 
     for(let rank = highSquare[0] + 1, file = highSquare[1] - 1; rank < lowSquare[0]; rank++, file--) {
 
@@ -87,7 +84,6 @@ function isBottomLeftToTopRightDiagonalEmpty(board, lowSquare, highSquare) {
 * @param destinationSquare- array representing the rook's destination. eg. [8, "a"]
 */
 export function isFilePathEmpty(board, originalSquare, destinationSquare) {
-    debugger;
     let distance = Math.abs(originalSquare[0] - destinationSquare[0]);
     
     //Return true if distance between the 2 squares is 1 or 0
@@ -123,7 +119,6 @@ export function isFilePathEmpty(board, originalSquare, destinationSquare) {
 * @param destinationSquare- array representing the rook's destination. eg. [7, 2]
 */
 export function isRankPathEmpty(board, originalSquare, destinationSquare) {
-    debugger;
     let distance = Math.abs(originalSquare[1] - destinationSquare[1]);
 
     //Return true if distance between the 2 squares is 1 or 0

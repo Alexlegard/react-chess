@@ -146,7 +146,7 @@ const Game = () => {
                 />
             )}
             <div className='debug' style={{ color: 'white' }}>
-                <div>{chessboard.enPassantTarget}</div>
+                <div>{chessboard.result}</div>
             </div>
         </div>
     );
