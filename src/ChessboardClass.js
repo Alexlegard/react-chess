@@ -1041,24 +1041,21 @@ class ChessboardClass {
     * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
     */
     findAValidBlackPawnMove(pawnPosition) {
+        // candidateSquares array should hold squares in the format [5, "e"]
         let candidateSquares = [];
 
         if(pawnPosition[0] === 1) {
             // The black pawn is on the seventh rank, meaning it can move two squares
-            candidateSquares.push([6, String.fromCharCode(97 + pawnPosition[1])]);
-            candidateSquares.push([5, String.fromCharCode(97 + pawnPosition[1])]);
+            candidateSquares.push([6, indexToLetter(pawnPosition[1])]);
+            candidateSquares.push([5, indexToLetter(pawnPosition[1])]);
         }
         else {
             // The black pawn is on another rank, meaning it can only move one square.
-            candidateSquares.push([6, pawnPosition[0]]);
+            candidateSquares.push([7 - pawnPosition[0], indexToLetter(pawnPosition[1])]);
         }
-        let modPawnPosition = [
-            8 - pawnPosition[0],
-            String.fromCharCode(97 + pawnPosition[1])
-        ];
 
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), modPawnPosition, [...square], "p", this.activeColor)) {
+            if(validateMoveSafety(this.board.map(row => [...row]), square, [...square], "p", this.activeColor)) {
                 return true;
             }
         }
@@ -1121,7 +1118,6 @@ class ChessboardClass {
     *
     * @param knightPosition - coordinates of the knight. eg. [1, 7] is b1.
     */
-   //TODO: Make sure this function is actually generating valid knight moves
     findAValidKnightMove(knightPosition) {
         let candidateSquares = [];
 
@@ -1181,6 +1177,7 @@ class ChessboardClass {
     * @param bishopPosition - coordinates of the bishop. eg. [2, 7] is c1.
     */
     findAValidBishopMove(bishopPosition) {
+        // candidateSquares should hold potential squares in the format [5, "c"]
         let candidateSquares = [];
 
         // Helper function to check if the square is in the bounds of the chessboard
@@ -1198,28 +1195,30 @@ class ChessboardClass {
 
         // Down-right bishop moves
         for(let i = 1; isInBounds(rank + i, file + i); i++) {
-            candidateSquares.push([rank + i, file + i]);
+            candidateSquares.push([8 - (rank + i), indexToLetter(file + i)]);
         }
 
         // Down-left bishop moves
         for(let i = 1; isInBounds(rank + i, file - i); i++) {
-            candidateSquares.push([rank + i, file - i]);
+            candidateSquares.push([8 - (rank + i), indexToLetter(file - i)]);
         }
 
         // Up-right bishop moves
         for(let i = 1; isInBounds(rank - i, file + i); i++) {
-            candidateSquares.push([rank - i, file + i]);
+            candidateSquares.push([8 - (rank - i), indexToLetter(file + i)]);
         }
 
         // Up-left bishop moves
         for(let i = 1; isInBounds(rank - i, file - i); i++) {
-            candidateSquares.push([rank - i, file - i]);
+            candidateSquares.push([8 - (rank - i), indexToLetter(file - i)]);
         }
 
         for(let square of candidateSquares) {
             const convertedOriginalSquare = [8 - bishopPosition[0], indexToLetter(bishopPosition[1])];
-            const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
-            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, convertedDestinationSquare, bishopLetter, this.activeColor)) {
+
+            // convertedOriginalSquare needs to be: 5, "c"
+            // convertedDestinationSquare, there's a little too many to list
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, bishopLetter, this.activeColor)) {
                 return true;
             }
         }
