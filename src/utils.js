@@ -7,3 +7,10 @@ export function letterToIndex(letter) {
 export function indexToLetter(index) {
     return String.fromCharCode(index + 97);
 }
+
+// Check if two letters are both uppercase or both lowercase
+export function sameCase(a, b) {
+    const aIsUpper = a === a.toUpperCase();
+    const bIsUpper = b === b.toUpperCase();
+    return aIsUpper === bIsUpper;
+}

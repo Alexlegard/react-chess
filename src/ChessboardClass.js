@@ -1,4 +1,4 @@
-const { indexToLetter } = require('./utils.js');
+const { indexToLetter, sameCase } = require('./utils.js');
 const { validateMoveSafety, canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
 
 class ChessboardClass {
@@ -1067,10 +1067,15 @@ class ChessboardClass {
     * Let's say the rook can only capture black pieces if
     * activeColor is w or white pieces if activeColor is b
     * 
-    * @param rookPosition - coordinates of the rook. eg. [0, 7] is a1.
+    * @param rookPosition - coordinates of the rook. eg. [0, 7] is h8.
     */
     findAValidRookMove(rookPosition) {
+
+        // candidateSquares should hold potential destination squares in
+        // the format [6, "b"]
         let candidateSquares = [];
+        let rank = rookPosition[0];
+        let file = rookPosition[1];
 
         // Helper function to determine if the coordinates are in bounds
         const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
@@ -1082,34 +1087,48 @@ class ChessboardClass {
             rookLetter = "r";
         }
 
-        let rank = rookPosition[0];
-        let file = rookPosition[1];
+        const directions = [
+            [1, 0], // Down
+            [0, 1], // Right
+            [-1, 0], // Up
+            [0, -1] // Left
+        ];
 
-        // Right rook moves
-        for(let i = 1; isInBounds(file + i); i++) {
-            candidateSquares.push([rank, file + i]);
-        }
+        // Iterate through each direction
+        directions.forEach(([dx, dy]) => {
+            let i = 1;
+            while(true) {
+                let newRank = rank + (i * dx);
+                let newFile = file + (i * dy);
+                // First check the square is in bounds
+                if(!isInBounds(newRank, newFile)) {
+                    break;
+                }
+                // Second break if the rook moves onto a friendly piece
+                let pieceOnDest = this.board[newRank][newFile];
+                if(pieceOnDest !== "") {
+                    if(sameCase(rookLetter, pieceOnDest)) {
+                        break;
+                    }
+                }
+                // Third, push to candidateSquares
+                candidateSquares.push(8 - newRank, indexToLetter(newFile));
 
-        // Down rook moves
-        for(let i = 1; isInBounds(rank + i); i++) {
-            candidateSquares.push([rank + i, file]);
-        }
-
-        // Left rook moves
-        for(let i = 1; isInBounds(file - i); i++) {
-            candidateSquares.push([rank, file - i]);
-        }
-
-        // Up rook moves
-        for(let i = 1; isInBounds(rank - i); i++) {
-            candidateSquares.push([rank - i, file]);
-        }
+                // Fourth, break if the rook moves onto ANY piece
+                if(pieceOnDest !== "") {
+                    break;
+                }
+            }
+        });
+        
+        const convertedOriginalSquare = [8 - rookPosition[0], indexToLetter(rookPosition[1])];
 
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), rookPosition, [...square], rookLetter, this.activeColor)) {
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, rookLetter, this.activeColor)) {
                 return true;
             }
         }
+        // if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, bishopLetter, this.activeColor))
         return false;
     }
 
@@ -1179,39 +1198,51 @@ class ChessboardClass {
     findAValidBishopMove(bishopPosition) {
         // candidateSquares should hold potential squares in the format [5, "c"]
         let candidateSquares = [];
-
-        // Helper function to check if the square is in the bounds of the chessboard
-        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
-
         let rank = bishopPosition[0];
         let file = bishopPosition[1];
-
         let bishopLetter;
         if(this.activeColor === "w") {
             bishopLetter = "B";
         } else if(this.activeColor === "b") {
             bishopLetter = "b";
         }
+        // Helper function to check if the square is in the bounds of the chessboard
+        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
 
-        // Down-right bishop moves
-        for(let i = 1; isInBounds(rank + i, file + i); i++) {
-            candidateSquares.push([8 - (rank + i), indexToLetter(file + i)]);
-        }
+        // Directional vectors for the bishop
+        const directions = [
+            [1, 1], // Down-right
+            [1, -1], // Down-left
+            [-1, 1], // Up-right
+            [-1, -1] // Up-left
+        ];
 
-        // Down-left bishop moves
-        for(let i = 1; isInBounds(rank + i, file - i); i++) {
-            candidateSquares.push([8 - (rank + i), indexToLetter(file - i)]);
-        }
+        // Iterate through each direction
+        directions.forEach(([dx, dy]) => {
+            let i = 1;
+            while(true) {
+                let newRank = rank + (i * dx);
+                let newFile = file + (i * dy);
+                // First check the square is on bounds
+                if(!isInBounds(newRank, newFile)) {
+                    break;
+                }
+                // Second break if the bishop moves onto a friendly piece
+                let pieceOnDest = this.board[newRank][newFile];
+                if(pieceOnDest !== "") {
+                    if(sameCase(bishopLetter, pieceOnDest)) {
+                        break;
+                    }
+                }
+                // Third, push to candidateSquares
+                candidateSquares.push(8 - newRank, indexToLetter(newFile));
 
-        // Up-right bishop moves
-        for(let i = 1; isInBounds(rank - i, file + i); i++) {
-            candidateSquares.push([8 - (rank - i), indexToLetter(file + i)]);
-        }
-
-        // Up-left bishop moves
-        for(let i = 1; isInBounds(rank - i, file - i); i++) {
-            candidateSquares.push([8 - (rank - i), indexToLetter(file - i)]);
-        }
+                // Fourth, break if the bishop moves onto ANY piece
+                if(pieceOnDest !== "") {
+                    break;
+                }
+            }
+        });
 
         for(let square of candidateSquares) {
             const convertedOriginalSquare = [8 - bishopPosition[0], indexToLetter(bishopPosition[1])];
