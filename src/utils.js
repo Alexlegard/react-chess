@@ -14,3 +14,9 @@ export function sameCase(a, b) {
     const bIsUpper = b === b.toUpperCase();
     return aIsUpper === bIsUpper;
 }
+
+// Function used by my "findAValidXMove" functions to check if a
+// square is in the bounds of the chessboard
+export function isInBounds(x, y) {
+    return x >= 0 && x <= 7 && y >= 0 && y <= 7;
+}

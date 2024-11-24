@@ -1,17 +1,17 @@
-const { indexToLetter, sameCase } = require('./utils.js');
+const { indexToLetter, sameCase, isInBounds } = require('./utils.js');
 const { validateMoveSafety, canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
 
 class ChessboardClass {
     constructor() {
         this.startingBoard = [
-            ["r", "n", "b", "q", "k", "", "", "r"],
-            ["p", "p", "p", "p", "", "p", "p", "p"],
-            ["", "", "", "", "", "n", "", ""],
-            ["", "", "b", "", "p", "", "", "Q"],
-            ["", "", "B", "", "P", "", "", ""],
+            ["", "", "", "", "k", "", "", ""],
             ["", "", "", "", "", "", "", ""],
-            ["P", "P", "P", "P", "", "P", "P", "P"],
-            ["R", "N", "B", "", "K", "", "N", "R"]
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "P", "P", "P"],
+            ["q", "", "", "", "", "", "K", ""]
         ];
         this.startingFen = "rnbqk2r/pppppQpp/8/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1";
         
@@ -1077,9 +1077,6 @@ class ChessboardClass {
         let rank = rookPosition[0];
         let file = rookPosition[1];
 
-        // Helper function to determine if the coordinates are in bounds
-        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
-
         let rookLetter;
         if(this.activeColor === "w") {
             rookLetter = "R";
@@ -1112,12 +1109,13 @@ class ChessboardClass {
                     }
                 }
                 // Third, push to candidateSquares
-                candidateSquares.push(8 - newRank, indexToLetter(newFile));
+                candidateSquares.push([8 - newRank, indexToLetter(newFile)]);
 
                 // Fourth, break if the rook moves onto ANY piece
                 if(pieceOnDest !== "") {
                     break;
                 }
+                i++;
             }
         });
         
@@ -1128,7 +1126,6 @@ class ChessboardClass {
                 return true;
             }
         }
-        // if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, bishopLetter, this.activeColor))
         return false;
     }
 
@@ -1206,8 +1203,6 @@ class ChessboardClass {
         } else if(this.activeColor === "b") {
             bishopLetter = "b";
         }
-        // Helper function to check if the square is in the bounds of the chessboard
-        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
 
         // Directional vectors for the bishop
         const directions = [
@@ -1235,12 +1230,13 @@ class ChessboardClass {
                     }
                 }
                 // Third, push to candidateSquares
-                candidateSquares.push(8 - newRank, indexToLetter(newFile));
+                candidateSquares.push([8 - newRank, indexToLetter(newFile)]);
 
                 // Fourth, break if the bishop moves onto ANY piece
                 if(pieceOnDest !== "") {
                     break;
                 }
+                i++;
             }
         });
 
@@ -1263,12 +1259,56 @@ class ChessboardClass {
     */
    //TODO: This function seems super problematic
     findAValidQueenMove(queenPosition) {
-        if(this.findAValidRookMove([queenPosition[0], queenPosition[1]])) {
-            return true;    
+        // candidateSquares should hold potential squares in the format [5, "c"]
+        let candidateSquares = [];
+        let rank = queenPosition[0];
+        let file = queenPosition[1];
+        let queenLetter;
+        if(this.activeColor === "w") {
+            queenLetter = "B";
+        } else if(this.activeColor === "b") {
+            queenLetter = "b";
         }
-        if(this.findAValidBishopMove([queenPosition[0], queenPosition[1]])) {
-            return true;
-        }
+
+        // Directional vectors for the bishop
+        const directions = [
+            [1, 1], // Down-right
+            [1, 0], // Down
+            [1, -1], // Down-left
+            [0, -1], // Left
+            [-1, -1], // Up-left
+            [-1, 0], // Up
+            [-1, 1], // Up-right
+            [0, 1] // Right
+        ];
+
+        // Iterate through each direction
+        directions.forEach(([dx, dy]) => {
+            let i = 1;
+            while(true) {
+                let newRank = rank + (i * dx);
+                let newFile = file + (i * dy);
+                // First check the square is in bounds
+                if(!isInBounds(newRank, newFile)) {
+                    break;
+                }
+                // Second break if the piece moved onto a friendly piece
+                let pieceOnDest = this.board[newRank][newFile];
+                if(pieceOnDest !== "") {
+                    if(sameCase(queenLetter, pieceOnDest)) {
+                        break;
+                    }
+                }
+                // Third, push to candidateSquares
+                candidateSquares.push([8 - newRank, indexToLetter(newFile)]);
+
+                // Fourth, break if the bishop moved onto ANY piece
+                if(pieceOnDest !== "") {
+                    break;
+                }
+                i++;
+            }
+        });
         
         return false;
     }
@@ -1281,13 +1321,6 @@ class ChessboardClass {
     findAValidKingMove(kingPosition) {
         
         let candidateSquares = [];
-
-        // Helper function to check if the square is in the bounds of the chessboard
-        const isInBounds = (x, y) => x >= 0 && x <= 7 && y >= 0 && y <= 7;
-
-        let rank = kingPosition[0];
-        let file = kingPosition[1];
-
         let kingLetter;
         if(this.activeColor === "w") {
             kingLetter = "K";
