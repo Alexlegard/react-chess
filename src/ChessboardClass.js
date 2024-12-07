@@ -4,14 +4,14 @@ const { validateMoveSafety, canAnyBlackPieceAttackSquare, canAnyWhitePieceAttack
 class ChessboardClass {
     constructor() {
         this.startingBoard = [
-            ["", "", "", "", "k", "", "", ""],
+            ["r", "n", "b", "q", "k", "", "q", "r"],
+            ["p", "p", "p", "p", "", "p", "p", "p"],
+            ["", "", "", "", "", "n", "", ""],
+            ["", "", "b", "", "p", "", "", "Q"],
+            ["", "", "B", "", "P", "", "", ""],
             ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "", "", ""],
-            ["", "", "", "", "", "P", "P", "P"],
-            ["q", "", "", "", "", "", "K", ""]
+            ["P", "P", "P", "P", "", "P", "P", "P"],
+            ["R", "N", "B", "", "K", "", "N", "R"]
         ];
         this.startingFen = "rnbqk2r/pppppQpp/8/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1";
         
@@ -829,20 +829,17 @@ class ChessboardClass {
 
         if(!isThereAValidMove && this.isPlayerChecked()) {
             if(this.activePlayer === "w") {
-                alert("Black won by checkmate");
                 this.result = "Black won by checkmate";
             } else {
-                alert("White won by checkmate");
                 this.result = "White won by checkmate";
             }
             return "checkmate";
         }
         if(!isThereAValidMove && !this.isPlayerChecked()) {
-            alert("Game drawn by stalemate");
-            this.result = "Stalemate";
-            return "Stalemate";
+            this.result = "stalemate";
+            return "stalemate";
         }
-        return "Not mate";
+        return "not mate";
     }
 
     //TODO: This function tries every square to see if there's a piece
@@ -909,40 +906,34 @@ class ChessboardClass {
                         if(this.findAValidBlackPawnMove([i, j])) {
                             return true;
                         }
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "r":
                         if(this.findAValidRookMove([i, j])) {
                             return true;
                         }
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "n":
+                        console.log(`Trying to find a move for the knight on the ${i}${j} square.`);
                         if(this.findAValidKnightMove([i, j])) {
                             return true;
                         }
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "b":
                         if(this.findAValidBishopMove([i, j])) {
                             return true;
                         }
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "q":
                         if(this.findAValidQueenMove([i, j])) {
                             return true;
                         }
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     case "k":
                         if(this.findAValidKingMove([i, j])) {
                             return true;
                         }
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                     default: // Empty square or white piece
-                        alert(`Found no valid move from ${i}${j}.`);
                         break;
                 }
             }
@@ -1179,8 +1170,7 @@ class ChessboardClass {
 
         for(let square of candidateSquares) {
             const convertedOriginalSquare = [8 - knightPosition[0], indexToLetter(knightPosition[1])];
-            const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
-            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, convertedDestinationSquare, knightLetter, this.activeColor)) {
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, knightLetter, this.activeColor)) {
                 return true;
             }
         }
@@ -1243,8 +1233,6 @@ class ChessboardClass {
         for(let square of candidateSquares) {
             const convertedOriginalSquare = [8 - bishopPosition[0], indexToLetter(bishopPosition[1])];
 
-            // convertedOriginalSquare needs to be: 5, "c"
-            // convertedDestinationSquare, there's a little too many to list
             if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, bishopLetter, this.activeColor)) {
                 return true;
             }
@@ -1257,7 +1245,6 @@ class ChessboardClass {
     *
     * @param queenPosition - coordinates of the queen. eg. [3, 7] is d1.
     */
-   //TODO: This function seems super problematic
     findAValidQueenMove(queenPosition) {
         // candidateSquares should hold potential squares in the format [5, "c"]
         let candidateSquares = [];
@@ -1265,9 +1252,9 @@ class ChessboardClass {
         let file = queenPosition[1];
         let queenLetter;
         if(this.activeColor === "w") {
-            queenLetter = "B";
+            queenLetter = "Q";
         } else if(this.activeColor === "b") {
-            queenLetter = "b";
+            queenLetter = "q";
         }
 
         // Directional vectors for the bishop
@@ -1309,6 +1296,14 @@ class ChessboardClass {
                 i++;
             }
         });
+
+        for(let square of candidateSquares) {
+            const convertedOriginalSquare = [8 - queenPosition[0], indexToLetter(queenPosition[1])];
+
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, queenLetter, this.activeColor)) {
+                return true;
+            }
+        }
         
         return false;
     }

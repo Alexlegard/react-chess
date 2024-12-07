@@ -27,8 +27,6 @@ function Chessboard(props) {
         }
     }
 
-    console.log(board);
-
     return (
         <div className="chessboard">
             { squares }

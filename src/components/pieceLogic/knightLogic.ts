@@ -11,7 +11,6 @@ import { validateMoveSafety } from "../../validateMoveSafety";
  */
 export const moveKnight = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
-    debugger;
     // Calculate the rank and file difference, which we need to calculate valid knight moves
     const rankDiff = Math.abs(originalSquare[0] - destinationSquare[0]);
     const asciiOfOriginalFile = originalSquare[1].charCodeAt(0);
