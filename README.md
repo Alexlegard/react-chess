@@ -12,13 +12,13 @@ The game is still pretty minimal. The players can play moves following the rules
 
 # Notable files
 
-<b>Board component hierarchy:</b> Game, Chessboard, Square\n
+<b>Board component hierarchy:</b> Game, Chessboard, Square
 
-<b>Game state class:</b> ChessboardClass\n
+<b>Game state class:</b> ChessboardClass
 
-<b>Move validator (make sure king is not in danger):</b> ValidateMoveSafety\n
+<b>Move validator (make sure king is not in danger):</b> ValidateMoveSafety
 
-<b>Piece movement logic: </b> pawnLogic, rookLogic, knightLogic, bishopLogic, kingLogic, queenLogic\n
+<b>Piece movement logic: </b> pawnLogic, rookLogic, knightLogic, bishopLogic, kingLogic, queenLogic
 
 <b>Test files:</b> checkmateTest, chessboardClass, validateMoveSafety
 
