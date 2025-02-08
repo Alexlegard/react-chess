@@ -114,7 +114,7 @@ export function canAnyBlackPieceAttackSquare(board, kingPosition) {
     return false;
 }
 
-/* Returns true if the black king is under attack by any piece.
+/* Returns true if the black king under attack by any piece.
 *
 * @param board - 2d array representing the board.
 * @param kingPosition - position of the black king (rank, then file)
