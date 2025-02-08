@@ -11,7 +11,7 @@ import { validateMoveSafety } from "../../validateMoveSafety";
  */
 export const moveRook = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
-    debugger;
+    //debugger;
 
     // Calculate the rank and file difference. The rook should only move if the rank difference is at
     // least 1and the file difference 0, OR the file difference is at least 1 and the rank difference 0.

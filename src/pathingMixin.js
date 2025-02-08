@@ -267,7 +267,7 @@ let pathingMixin = {
     *   lowercase letter is a black piece.
     */
     movePieceToEmptySquare(originalFile, originalRank, destinationFile, destinationRank, piece) {
-        debugger;
+        
         // Convert letter into a numeric value
         const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
         const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;

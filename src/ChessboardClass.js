@@ -1,17 +1,29 @@
 const { indexToLetter, sameCase, isInBounds } = require('./utils.js');
 const { validateMoveSafety, canAnyBlackPieceAttackSquare, canAnyWhitePieceAttackSquare } = require("./validateMoveSafety");
 
+/*
+Starting board
+
+["r", "n", "b", "q", "k", "b", "n", "r"],
+["p", "p", "p", "p", "p", "p", "p", "p"],
+["", "", "", "", "", "", "", ""],
+["", "", "", "", "", "", "", ""],
+["", "", "", "", "", "", "", ""],
+["", "", "", "", "", "", "", ""],
+["P", "P", "P", "P", "P", "P", "P", "P"],
+["R", "N", "B", "Q", "K", "B", "N", "R"]
+*/
 class ChessboardClass {
     constructor() {
         this.startingBoard = [
-            ["r", "n", "b", "q", "k", "", "q", "r"],
-            ["p", "p", "p", "p", "", "p", "p", "p"],
-            ["", "", "", "", "", "n", "", ""],
-            ["", "", "b", "", "p", "", "", "Q"],
-            ["", "", "B", "", "P", "", "", ""],
+            ["r", "n", "b", "q", "k", "b", "n", "r"],
+            ["p", "p", "p", "p", "p", "p", "p", "p"],
             ["", "", "", "", "", "", "", ""],
-            ["P", "P", "P", "P", "", "P", "P", "P"],
-            ["R", "N", "B", "", "K", "", "N", "R"]
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["P", "P", "P", "P", "P", "P", "P", "P"],
+            ["R", "N", "B", "Q", "K", "B", "N", "R"]
         ];
         this.startingFen = "rnbqk2r/pppppQpp/8/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1";
         
@@ -238,14 +250,14 @@ class ChessboardClass {
         this.enPassantTarget = "-";
     }
 
-    /* Checks if a square is empty.
-    *
-    * test params: "a", 3
+    /*
+    * Checks if a square is empty. Example input: ["c", 6]
+    * 
+    * @param file: letter representing the file eg. "a"
+    * @param rank: number representing the rank, starting with 1 = first rank
     */
     isSquareEmpty(file, rank) {
         
-        
-
         //Check if file is a string
         if (typeof file !== 'string') {
             return true;
@@ -821,16 +833,19 @@ class ChessboardClass {
         }
 
         let isThereAValidMove;
+        let playerChecked = this.isPlayerChecked();
         if(this.activeColor === "w") {
             isThereAValidMove = this.findAValidWhiteMove(kingPosition);
         } else if(this.activeColor === "b") {
             isThereAValidMove = this.findAValidBlackMove(kingPosition);
         }
 
-        if(!isThereAValidMove && this.isPlayerChecked()) {
-            if(this.activePlayer === "w") {
+        console.log(`isMate vars: ${isThereAValidMove}, ${playerChecked}`);
+        
+        if(!isThereAValidMove && playerChecked) {
+            if(this.activeColor === "w") {
                 this.result = "Black won by checkmate";
-            } else {
+            } else if(this.activeColor === "b") {
                 this.result = "White won by checkmate";
             }
             return "checkmate";
@@ -851,8 +866,10 @@ class ChessboardClass {
     */
     findAValidWhiteMove(kingPosition) {
         let piece;
+        // These 2 loops are going through the 64 squares
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
+                console.log(`Checking ${i}${j} square.`);
                 piece = this.board[i][j];
                 switch(piece) {
                     case "P":
@@ -866,7 +883,7 @@ class ChessboardClass {
                         }
                         break;
                     case "N":
-                        if(this.findAValidRookMove([i, j])) {
+                        if(this.findAValidKnightMove([i, j])) {
                             return true;
                         }
                         break;
@@ -898,6 +915,8 @@ class ChessboardClass {
     */
     findAValidBlackMove() {
         let piece;
+        // Double-loop to iterate over all the squares on the board
+        // For current test: I'm looking for i = 1 and j = 2
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
                 piece = this.board[i][j];
@@ -913,7 +932,6 @@ class ChessboardClass {
                         }
                         break;
                     case "n":
-                        console.log(`Trying to find a move for the knight on the ${i}${j} square.`);
                         if(this.findAValidKnightMove([i, j])) {
                             return true;
                         }
@@ -1007,20 +1025,78 @@ class ChessboardClass {
     * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
     */
     findAValidWhitePawnMove(pawnPosition) {
+        // Create a var that represents whether a forward pawn move has been found,
+        // and another var that represents whether a capture has been found. Return
+        // true if either has been found.
+        const thereIsValidForwardMove = this.findAValidWhiteForwardPawnMove(pawnPosition);
+        const thereIsValidCapture = this.findAValidWhitePawnCapture(pawnPosition);
+        return thereIsValidForwardMove || thereIsValidCapture;
+    }
+
+    /*
+    * Returns true if the white pawn on the given square has a valid forward pawn move.
+    *
+    * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
+    */
+    //TODO: This function is problematic during fool's mate, 1.f3 e6 2.g4 Qh4#
+    findAValidWhiteForwardPawnMove(pawnPosition) {
         let candidateSquares = [];
         
-        if(pawnPosition[1] === 6) {
+        if(pawnPosition[0] === 6) {
             // The white pawn is on the second rank, meaning it can move two squares
-            candidateSquares.push([pawnPosition[0], 5]);
-            candidateSquares.push([pawnPosition[0], 4]);
+            candidateSquares.push([3, indexToLetter(pawnPosition[1])]);
+            candidateSquares.push([4, indexToLetter(pawnPosition[1])]);
         }
         else {
             // The white pawn is on another rank, meaning it can only move one square.
-            candidateSquares.push([pawnPosition[0], pawnPosition[1]-1]);
+            candidateSquares.push([9 - pawnPosition[0], indexToLetter(pawnPosition[1])]);
         }
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), pawnPosition, [...square], "P", this.activeColor)) {
-                return true;
+            let convertedOriginalSquare = [8 - pawnPosition[0], indexToLetter(pawnPosition[1])];
+            if(this.isSquareEmpty(square[1], square[0])) {
+                if(this.isPathEmpty([8 - pawnPosition[0], indexToLetter(pawnPosition[1])], 
+                [square[0], indexToLetter(square[1])])) {
+                    if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, [...square], "P", this.activeColor)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+    * Returns true if the pawn on the given square has a valid capture.
+    *
+    * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
+    */
+   //TODO: Finish this function to tick off my last test case
+    findAValidWhitePawnCapture(pawnPosition) {
+        let candidateSquares = [];
+        
+        // Helper function to validate rank and file coordinates
+        function isValidCoordinate(rank, file) {
+            return rank >= 0 && rank <= 7 && file >= 0 && file <= 7;
+        }
+
+        const rank = pawnPosition[0] - 1;
+        const fileRight = pawnPosition[1] + 1;
+        const fileLeft = pawnPosition[1] - 1;
+
+        if (isValidCoordinate(rank, fileRight)) {
+            candidateSquares.push([8-rank, indexToLetter(fileRight)]);
+        }
+    
+        if (isValidCoordinate(rank, fileLeft)) {
+            candidateSquares.push([8-rank, indexToLetter(fileLeft)]);
+        }
+
+        for(let square of candidateSquares) {
+            let convertedOriginalSquare = [8 - pawnPosition[0], indexToLetter(pawnPosition[1])];
+            if(this.isSquareOccupiedByEnemyPiece(convertedOriginalSquare[1], convertedOriginalSquare[0], square[1], square[0], "P")) {
+                if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, [...square], "P", this.activeColor)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1032,6 +1108,18 @@ class ChessboardClass {
     * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
     */
     findAValidBlackPawnMove(pawnPosition) {
+        const thereIsValidForwardMove = this.findAValidBlackForwardPawnMove(pawnPosition);
+        const thereIsValidCapture = this.findAValidBlackPawnCapture(pawnPosition);
+        return thereIsValidForwardMove || thereIsValidCapture;
+    }
+
+    /*
+    * Returns true if a black pawn on the given square has a valid forward move.
+    *
+    * @param pawnPosition - coordinates of the pawn. eg. [0, 6] is a2.
+    */
+    findAValidBlackForwardPawnMove(pawnPosition) {
+        //alert(`Looking for valid pawn move for ${pawnPosition[0]}${pawnPosition[1]} square.`);
         // candidateSquares array should hold squares in the format [5, "e"]
         let candidateSquares = [];
 
@@ -1046,8 +1134,48 @@ class ChessboardClass {
         }
 
         for(let square of candidateSquares) {
-            if(validateMoveSafety(this.board.map(row => [...row]), square, [...square], "p", this.activeColor)) {
-                return true;
+            let convertedOriginalSquare = [8 - pawnPosition[0], indexToLetter(pawnPosition[1])];
+            //TODO: Make sure the candidate square is empty, the path to that square is empty, and call validateMoveSafety
+            if(this.isSquareEmpty(square[1], square[0])) {
+                if(this.isPathEmpty([8 - pawnPosition[0], indexToLetter(pawnPosition[1])], 
+                [square[0], indexToLetter(square[1])])) {
+                    if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, [...square], "P", this.activeColor)) {
+                        //TODO: This must be returning true when it shouldn't.
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    //TODO: Finish this function to tick off my last test case
+    findAValidBlackPawnCapture(pawnPosition) {
+        let candidateSquares = [];
+        
+        // Helper function to validate rank and file coordinates
+        function isValidCoordinate(rank, file) {
+            return rank >= 0 && rank <= 7 && file >= 0 && file <= 7;
+        }
+
+        const rank = pawnPosition[0] + 1;
+        const fileRight = pawnPosition[1] + 1;
+        const fileLeft = pawnPosition[1] - 1;
+
+        if (isValidCoordinate(rank, fileRight)) {
+            candidateSquares.push([8-rank, indexToLetter(fileRight)]);
+        }
+    
+        if (isValidCoordinate(rank, fileLeft)) {
+            candidateSquares.push([8-rank, indexToLetter(fileLeft)]);
+        }
+
+        for(let square of candidateSquares) {
+            let convertedOriginalSquare = [8 - pawnPosition[0], indexToLetter(pawnPosition[1])];
+            if(this.isSquareOccupiedByEnemyPiece(convertedOriginalSquare[1], convertedOriginalSquare[0], square[1], square[0], "p")) {
+                if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, [...square], "p", this.activeColor)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1289,7 +1417,7 @@ class ChessboardClass {
                 // Third, push to candidateSquares
                 candidateSquares.push([8 - newRank, indexToLetter(newFile)]);
 
-                // Fourth, break if the bishop moved onto ANY piece
+                // Fourth, break if the queen moved onto ANY piece
                 if(pieceOnDest !== "") {
                     break;
                 }
@@ -1315,7 +1443,10 @@ class ChessboardClass {
     */
     findAValidKingMove(kingPosition) {
         
+        // candidateSquares should hold potential squares in the format [5, "c"]
         let candidateSquares = [];
+        let rank = kingPosition[0];
+        let file = kingPosition[1];
         let kingLetter;
         if(this.activeColor === "w") {
             kingLetter = "K";
@@ -1323,31 +1454,45 @@ class ChessboardClass {
             kingLetter = "k";
         }
 
-        let potentialMoves = [
-            [kingPosition[0]+1, kingPosition[1]+1],
-            [kingPosition[0]+1, kingPosition[1]],
-            [kingPosition[0]+1, kingPosition[1]-1],
-            [kingPosition[0]-1, kingPosition[1]+1],
-            [kingPosition[0]-1, kingPosition[1]],
-            [kingPosition[0]-1, kingPosition[1]-1],
-            [kingPosition[0], kingPosition[1]+1],
-            [kingPosition[0], kingPosition[1]-1]
+        // Directional vectors for the bishop
+        const directions = [
+            [1, 1], // Down-right
+            [1, 0], // Down
+            [1, -1], // Down-left
+            [0, -1], // Left
+            [-1, -1], // Up-left
+            [-1, 0], // Up
+            [-1, 1], // Up-right
+            [0, 1] // Right
         ];
 
-        // Push each of these 8 squares if they are in bounds.
-        for(let move of potentialMoves) {
-            if(isInBounds(move)) {
-                candidateSquares.push(move);
+        for (let [dx, dy] of directions) {
+            let newRank = rank + dx;
+            let newFile = file + dy;
+        
+            // Skip this direction if the square is out of bounds
+            if (!isInBounds(newRank, newFile)) {
+                continue;
             }
+        
+            let pieceOnDest = this.board[newRank][newFile];
+            // Skip this direction if the square contains a friendly piece
+            if (pieceOnDest !== "" && sameCase(kingLetter, pieceOnDest)) {
+                continue;
+            }
+        
+            // Add to candidateSquares if the square is valid
+            candidateSquares.push([8 - newRank, indexToLetter(newFile)]);
         }
 
         for(let square of candidateSquares) {
             const convertedOriginalSquare = [8 - kingPosition[0], indexToLetter(kingPosition[1])];
-            const convertedDestinationSquare = [square[0], indexToLetter(square[1])];
-            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, convertedDestinationSquare, kingLetter, this.activeColor)) {
+
+            if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, square, kingLetter, this.activeColor)) {
                 return true;
             }
         }
+        
         return false;
     }
 

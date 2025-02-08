@@ -2,6 +2,7 @@ import { isDiagonalPathEmpty, isRankPathEmpty, isFilePathEmpty } from './pathing
 
 /*
 * Returns true if the proposed move is safe and not putting their own king in danger.
+* Must be a valid board state and other params.
 * 
 * @param board ------ Board property of ChessboardClass. Formatted board[rank][file]
 *                     eg. board[0][0] is the a8 square

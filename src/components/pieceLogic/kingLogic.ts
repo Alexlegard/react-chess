@@ -10,8 +10,6 @@ import { validateMoveSafety, canAnyWhitePieceAttackSquare, canAnyBlackPieceAttac
  */
 export const moveKing = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
-    debugger;
-
     const originalSquareReadable = originalSquare[1] + originalSquare[0];
     const destinationSquareReadable = destinationSquare[1] + destinationSquare[0];
 

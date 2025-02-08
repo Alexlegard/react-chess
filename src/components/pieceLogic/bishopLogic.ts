@@ -10,7 +10,7 @@ import { validateMoveSafety } from "../../validateMoveSafety";
  */
 export const moveBishop = (originalSquare: any[], destinationSquare: any[], board: ChessboardClass): void => {
 
-    debugger;
+    //debugger;
     
 
     // Calculate the rank and file difference, which we need to determine if both squares are on the same diagonal

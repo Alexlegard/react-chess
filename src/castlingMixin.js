@@ -64,7 +64,7 @@ let castlingMixin = {
     */
     removeCastlingRights(color, rookOriginalSquare) {
 
-        debugger;
+        
 
         // King move remove castling logic
         if(rookOriginalSquare === undefined) {

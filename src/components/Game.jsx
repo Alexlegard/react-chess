@@ -88,11 +88,10 @@ const Game = () => {
                 moveKing(selectedPiece, destinationSquare, chessboard);
                 break;
             default:
-                alert("Unknown piece type.");
         }
         setSelectedPiece(undefined);
-        chessboard.isMate();
-        alert(chessboard.result);
+        let checkmateVar = chessboard.isMate();
+        alert(checkmateVar);
     }
 
     const onPromotionNeeded = (destinationRank, destinationFile, color) => {
@@ -146,7 +145,8 @@ const Game = () => {
                 />
             )}
             <div className='debug' style={{ color: 'white' }}>
-                <div>{chessboard.result}</div>
+                <div>Result: {chessboard.result}</div>
+                <div>Active color: {chessboard.activeColor}</div>
             </div>
         </div>
     );

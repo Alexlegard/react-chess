@@ -3,7 +3,7 @@ import './PromotionPopup.css';
 
 const PromotionPopup = ({ onPromote, onCancel, color }) => {
 
-    debugger;
+    //debugger;
     
     /* Promotion popup for white */
     if(color === "w") {

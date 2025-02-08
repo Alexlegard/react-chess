@@ -1,23 +1,23 @@
 let pawnMixin = {
     getEnPassantTarget() {
-        debugger;
+        //debugger;
         return this.enPassantTarget;
     },
 
     getEnPassantTargetReadable() {
-        debugger;
+        //debugger;
         return this.enPassantTargetReadable;
     },
 
     setEnPassantTarget(file, rank) {
-        debugger;
+        //debugger;
         this.enPassantTarget = [file, rank];
         this.enPassantTargetReadable = `${file}${rank}`;
         this.constructFenString();
     },
 
     deselectEnPassantTarget() {
-        debugger;
+        //debugger;
         this.enPassantTarget = "-";
         this.enPassantTargetReadable = "-";
         this.constructFenString();
@@ -87,7 +87,7 @@ let pawnMixin = {
     */
     promotePawn(originalFile, originalRank, destinationFile, destinationRank, promotedPiece) {
 
-        debugger;
+        //debugger;
 
         // Convert letter into a numeric value
         const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
