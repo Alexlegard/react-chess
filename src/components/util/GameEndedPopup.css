@@ -1,0 +1,12 @@
+.result-popup {
+    width: 580px;
+    height: 200px;
+    background-color: white;
+    padding: 10px;
+    border: 2px solid black;
+    margin:auto;
+}
+
+.result-popup p {
+    font-weight: bold;
+}

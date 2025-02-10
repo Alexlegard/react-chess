@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Chessboard from './chessboard/Chessboard';
 import ChessboardClass from '../ChessboardClass';
 import PromotionPopup from './util/PromotionPopup.tsx';
+import GameEndedPopup from './util/GameEndedPopup.tsx';
 import { moveKnight } from './pieceLogic/knightLogic.ts';
 import { movePawn } from './pieceLogic/pawnLogic.ts';
 import { moveBishop } from './pieceLogic/bishopLogic.ts';
@@ -34,6 +35,12 @@ const Game = () => {
         if(!piece) { // If there's no piece on clicked square, terminate the function
             return;
         }
+
+        // If the game has ended in checkmate or stalemate, terminate the function
+        if(chessboard.result !== "in progress") {
+            return;
+        }
+
         let pieceColor;
         if(piece === piece.toUpperCase()) {
             // It is a white piece because white pieces are uppercase.
@@ -90,8 +97,8 @@ const Game = () => {
             default:
         }
         setSelectedPiece(undefined);
-        let checkmateVar = chessboard.isMate();
-        alert(checkmateVar);
+        const checkmateVar = chessboard.isMate();
+        console.log(checkmateVar);
     }
 
     const onPromotionNeeded = (destinationRank, destinationFile, color) => {
@@ -144,10 +151,15 @@ const Game = () => {
                     color={chessboard.getActiveColor()}
                 />
             )}
+            {
+            chessboard.result === "in progress" &&
             <div className='debug' style={{ color: 'white' }}>
-                <div>Result: {chessboard.result}</div>
-                <div>Active color: {chessboard.activeColor}</div>
-            </div>
+                <div>Player turn: {chessboard.activeColor}</div>
+            </div>}
+            {
+            chessboard.result !== "in progress" && (
+            <GameEndedPopup result={chessboard.result} />
+            )}
         </div>
     );
 };
