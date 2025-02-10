@@ -18,8 +18,8 @@ export const moveQueen = (originalSquare: any[], destinationSquare: any[], board
     const asciiOfDestinationFile = destinationSquare[1].charCodeAt(0);
     const fileDiff = Math.abs(asciiOfOriginalFile - asciiOfDestinationFile);
 
-    const horizontalMove = rankDiff == 0 && fileDiff >= 1;
-    const verticalMove = rankDiff >= 1 && fileDiff == 0;
+    const horizontalMove = rankDiff === 0 && fileDiff >= 1;
+    const verticalMove = rankDiff >= 1 && fileDiff === 0;
     const diagonalMove = ( rankDiff === fileDiff && rankDiff > 0 );
 
     // The queen may move either horizontally, vertically, or diagonally
@@ -36,7 +36,7 @@ export const moveQueen = (originalSquare: any[], destinationSquare: any[], board
                 }
             }
             // If the destination square is occupied by an enemy piece, capture it.
-            if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+            if(board.isSquareOccupiedByEnemyPiece(destinationSquare[1], destinationSquare[0], originalSquare[2])) {
                 if(validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
                     [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
                     board.captureEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2]);

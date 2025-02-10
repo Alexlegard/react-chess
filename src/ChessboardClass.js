@@ -187,6 +187,8 @@ class ChessboardClass {
             case "h8":
                 this.blackCanCastleKingside = false;
                 return;
+            default:
+                throw new Error(`Invalid rook square: ${rookSquare}`);
         }
     }
 
@@ -268,8 +270,6 @@ class ChessboardClass {
 
         const piece = this.board[rankIndex][fileIndex-1];
         return piece === "";
-
-        return true;
     }
 
     /*
@@ -280,15 +280,12 @@ class ChessboardClass {
     * @param piece - Letter representing the piece. A capital letter is a white piece while a
     *   lowercase letter is a black piece.
     */
-    isSquareOccupiedByEnemyPiece(originalFile, originalRank, destinationFile, destinationRank, piece) {
+    isSquareOccupiedByEnemyPiece(destinationFile, destinationRank, piece) {
 
-        
         // Convert files (letters) into numeric values which are the correct index
-        const originalFileIndex = originalFile.toLowerCase().charCodeAt(0) - 97;
         const destinationFileIndex = destinationFile.toLowerCase().charCodeAt(0) - 97;
 
         // Correctly calculate the index for the ranks as well
-        const originalRankIndex = 8 - originalRank;
         const destinationRankIndex = 8 - destinationRank;
 
         const destinationSqPiece = this.board[destinationRankIndex][destinationFileIndex];
@@ -435,10 +432,7 @@ class ChessboardClass {
             return true;
         }
 
-        
-        const originalFileIndex = originalSquare[1].toLowerCase().charCodeAt(0) - 96;
         const originalRankIndex = 8 - originalSquare[0];
-        const destinationFileIndex = destinationSquare[1].toLowerCase().charCodeAt(0) - 96;
         const destinationRankIndex = 8 - destinationSquare[0];
 
         let lowSquare, highSquare;
@@ -465,8 +459,6 @@ class ChessboardClass {
     */
     isBottomRightToTopLeftDiagonalEmpty(lowSquare, highSquare) {
         
-
-        const lowFileIndex = lowSquare[1].toLowerCase().charCodeAt(0) - 97;
         const lowRankIndex = 8 - lowSquare[0];
         const highFileIndex = highSquare[1].toLowerCase().charCodeAt(0) - 97;
         const highRankIndex = 8 - highSquare[0];
@@ -491,8 +483,6 @@ class ChessboardClass {
     */
     isBottomLeftToTopRightDiagonalEmpty(lowSquare, highSquare) {
         
-
-        const lowFileIndex = lowSquare[1].toLowerCase().charCodeAt(0) - 97;
         const lowRankIndex = 8 - lowSquare[0];
         const highFileIndex = highSquare[1].toLowerCase().charCodeAt(0) - 97;
         const highRankIndex = 8 - highSquare[0];
@@ -1093,7 +1083,7 @@ class ChessboardClass {
 
         for(let square of candidateSquares) {
             let convertedOriginalSquare = [8 - pawnPosition[0], indexToLetter(pawnPosition[1])];
-            if(this.isSquareOccupiedByEnemyPiece(convertedOriginalSquare[1], convertedOriginalSquare[0], square[1], square[0], "P")) {
+            if(this.isSquareOccupiedByEnemyPiece(square[1], square[0], "P")) {
                 if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, [...square], "P", this.activeColor)) {
                     return true;
                 }
@@ -1172,7 +1162,7 @@ class ChessboardClass {
 
         for(let square of candidateSquares) {
             let convertedOriginalSquare = [8 - pawnPosition[0], indexToLetter(pawnPosition[1])];
-            if(this.isSquareOccupiedByEnemyPiece(convertedOriginalSquare[1], convertedOriginalSquare[0], square[1], square[0], "p")) {
+            if(this.isSquareOccupiedByEnemyPiece(square[1], square[0], "p")) {
                 if(validateMoveSafety(this.board.map(row => [...row]), convertedOriginalSquare, [...square], "p", this.activeColor)) {
                     return true;
                 }

@@ -251,6 +251,7 @@ function canQueenAttackSquare(board, queenLocation, checkedSquare) {
 * @param originalSquare- the pawn's starting square
 * @param destinationSquare- The pawn's destination
 */
+/*
 function validateEnPassantSafety(board, originalSquare, destinationSquare, activePlayer) {
     
     let originalRankIndex = 8 - originalSquare[0];
@@ -270,4 +271,4 @@ function validateEnPassantSafety(board, originalSquare, destinationSquare, activ
     board[originalRankIndex][destinationFileIndex] = "";
 
     return true;
-}
+}*/

@@ -181,9 +181,13 @@ function matchesEnPassantPattern(originalSquare, destinationSquare, board) {
 
 function matchesPawnFirstMovePattern(originalSquare, destinationSquare, board) {
     
-    return (originalSquare[1] === destinationSquare[1] && 
-        (board.activeColor === "w" && (destinationSquare[0] - originalSquare[0] === 1 || destinationSquare[0] - originalSquare[0] === 2) ||
-        board.activeColor === "b" && (destinationSquare[0] - originalSquare[0] === -1 || destinationSquare[0] - originalSquare[0] === -2)));
+    const sameFile = originalSquare[1] === destinationSquare[1];
+    const whitePawnForwardOneOrTwoSquares = board.activeColor === "w" && 
+        (destinationSquare[0] - originalSquare[0] === 1 || destinationSquare[0] - originalSquare[0] === 2);
+    const blackPawnForwardOneOrTwoSquares = board.activeColor === "b" && 
+        (destinationSquare[0] - originalSquare[0] === -1 || destinationSquare[0] - originalSquare[0] === -2);
+
+    return sameFile && (whitePawnForwardOneOrTwoSquares || blackPawnForwardOneOrTwoSquares);
 }
 
 function matchesPawnNonFirstMovePattern(originalSquare, destinationSquare, board) {
@@ -199,7 +203,7 @@ function matchesPawnCapturePattern(originalSquare, destinationSquare, board) {
     
 
     // Return false if destination square does not have a capturable piece
-    if(!board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+    if(!board.isSquareOccupiedByEnemyPiece(destinationSquare[1], destinationSquare[0], originalSquare[2])) {
         return false;
     }
 

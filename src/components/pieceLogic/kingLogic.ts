@@ -34,7 +34,7 @@ export const moveKing = (originalSquare: any[], destinationSquare: any[], board:
             }
         }
         // Check if the destination square is occupied by an enemy piece.
-        if(board.isSquareOccupiedByEnemyPiece(originalSquare[1], originalSquare[0], destinationSquare[1], destinationSquare[0], originalSquare[2])) {
+        if(board.isSquareOccupiedByEnemyPiece(destinationSquare[1], destinationSquare[0], originalSquare[2])) {
             if(validateMoveSafety(board.board.map(row => [...row]), [originalSquare[0], originalSquare[1]],
                 [destinationSquare[0], destinationSquare[1]], originalSquare[2], board.activeColor)) {
                 board.removeCastlingRights(board.activeColor);

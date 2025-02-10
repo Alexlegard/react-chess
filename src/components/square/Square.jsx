@@ -5,8 +5,7 @@ import './Square.css';
 function Square(props) {
 
     const {rank, file, piece, onClick, selectedPiece} = props;
-    // Define the type of the draggable item
-    const droppableTypes = "PIECE";
+    
     let isSelected;
     if(selectedPiece) {
         isSelected = (selectedPiece[0] === rank && selectedPiece[1] === file);
@@ -83,6 +82,8 @@ function Square(props) {
         case "":
             piecePath = undefined;
             break;
+        default:
+            throw new Error("Invalid piece type");
     }
 
     let classStr;
@@ -104,7 +105,7 @@ function Square(props) {
 
     return (
         <div className={classStr} onClick={handleClick} style={isSelected ? {backgroundColor: 'yellow'} : {}}>
-            {piecePath ? <img src={piecePath} width="70" height="70" /> : null}
+            {piecePath ? <img src={piecePath} alt={pieceWord} width="70" height="70" /> : null}
         </div>
     );
 }

@@ -27,7 +27,7 @@ let pathingMixin = {
     * @param piece - Letter representing the piece. A capital letter is a white piece while a
     *   lowercase letter is a black piece.
     */
-    isSquareOccupiedByEnemyPiece(originalFile, originalRank, destinationFile, destinationRank, piece) {
+    isSquareOccupiedByEnemyPiece(destinationFile, destinationRank, piece) {
 
         
         // Convert files (letters) into numeric values which are the correct index

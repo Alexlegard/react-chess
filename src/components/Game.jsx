@@ -13,7 +13,7 @@ import { moveKing } from './pieceLogic/kingLogic.ts';
 const Game = () => {
 
     const startingBoard = new ChessboardClass();
-    const [chessboard, setChessboard] = useState(startingBoard);
+    const [chessboard] = useState(startingBoard);
     //selectedPiece is an array: [rank, file, (letter representing the piece)]
     const [selectedPiece, setSelectedPiece] = useState(undefined);
     const [isPromotionPending, setIsPromotionPending] = useState(false);
@@ -132,6 +132,8 @@ const Game = () => {
                 chessboard.deselectEnPassantTarget();
                 setPromotionData(null);
                 return;
+            default:
+                throw new Error("Invalid promotion.");
         }
     }
 
